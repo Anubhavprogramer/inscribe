@@ -1,5 +1,4 @@
-import React, { useContext } from 'react';
-import { ColorContext } from '../Contexts/ColorContext';
+import React from 'react';
 
 const Button = ({ toggleColorPicker,text, color }) => { // Destructure toggleColorPicker from props
     // console.log(text);
