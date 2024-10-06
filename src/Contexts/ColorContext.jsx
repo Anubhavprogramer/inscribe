@@ -6,16 +6,13 @@ export const ColorContext = createContext();
 // Create the provider
 export const ColorProvider = ({ children }) => {
   const [color, setColor] = useState("#fffff"); // Initialize with default color
-//   const [isPickerOpen, setIsPickerOpen] = useState(false); // Manage the color picker visibility
   const [textColor, settextColor] = useState("#000000"); // Initialize with default color
-
-  // Function to toggle color picker visibility
-//   const toggleColorPicker = () => {
-//     setIsPickerOpen(!isPickerOpen);
-//   };
+  
+  const [title, setTitle] = useState("second")
+  const [note, setNote] = useState("second")
 
   return (
-    <ColorContext.Provider value={{ color, setColor,  textColor, settextColor }}>
+    <ColorContext.Provider value={{ color, setColor,  textColor, settextColor, title, setTitle, note, setNote }}>
       {children}
     </ColorContext.Provider>
   );
