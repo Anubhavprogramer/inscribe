@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchNotes } from '../DataBase/StoreData'; // Import the fetchNotes function
+// import { fetchNotes } from '../DataBase/StoreData'; // Import the fetchNotes function
 import { useAuth } from '@clerk/clerk-react';
 
 function MyNotes() {
@@ -10,8 +10,8 @@ function MyNotes() {
   useEffect(() => {
     const getNotes = async () => {
       if (user) {
-        const userNotes = await fetchNotes(user); // Pass user to fetchNotes function
-        setNotes(userNotes);
+        // const userNotes = await fetchNotes(user); // Pass user to fetchNotes function
+        // setNotes(userNotes);
       }
     };
 

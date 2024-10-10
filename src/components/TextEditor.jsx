@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { ColorContext } from '../Contexts/ColorContext';
 import { useUser } from '@clerk/clerk-react';
-import { saveNote } from '../DataBase/StoreData'; // Import the saveNote function
+// import { saveNote } from '../DataBase/StoreData'; // Import the saveNote function
 
 function TextEditor() {
   const { color, textColor, title, setTitle, note, setNote } = useContext(ColorContext); // Access color context
@@ -17,12 +17,12 @@ function TextEditor() {
 
   const handleSave = async () => {
     // console.log("Saving note...",user.id);
-    if (user && title && note) {
-      await saveNote({ title, content: note }, user); // Pass user and note content
+    // if (user && title && note) {
+      // await saveNote({ title, content: note }, user); // Pass user and note content
       // console.log("Note saved successfully");
-    } else {
-      console.error("User not authenticated or fields are empty");
-    }
+    // } else {
+    //   console.error("User not authenticated or fields are empty");
+    // }
   };
 
   return (
