@@ -1,12 +1,20 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { ColorContext } from '../Contexts/ColorContext';
 import { useUser } from '@clerk/clerk-react';
-// import { saveNote } from '../DataBase/StoreData'; // Import the saveNote function
+import { addNote } from '../../convex/Notes';
 
 function TextEditor() {
-  const { color, textColor, title, setTitle, note, setNote } = useContext(ColorContext); // Access color context
+  const { color, textColor, title, setTitle, note, setNote, setCardnotes ,selectedNote } = useContext(ColorContext); // Access color context
   const { user } = useUser(); // Get the authenticated user
 
+  // Redirect to login if the user is not authenticated
+  useEffect(() => {
+    if (!user) {
+      window.location.href = '/login';
+    }
+  }, [user]);
+
+  // Handlers for title and note text changes
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
   };
@@ -15,22 +23,32 @@ function TextEditor() {
     setNote(e.target.value);
   };
 
+  // Save note function
   const handleSave = async () => {
-    // console.log("Saving note...",user.id);
-    // if (user && title && note) {
-      // await saveNote({ title, content: note }, user); // Pass user and note content
-      // console.log("Note saved successfully");
-    // } else {
-    //   console.error("User not authenticated or fields are empty");
-    // }
+    try {
+      await addNote({
+        content: note,
+        title: title,
+        user: user.emailAddress, // Save user email for identification
+        time: new Date().toISOString(), // Record the time the note was saved
+        color: color, // Save the note's background color
+        textColor: textColor // Save the note's text color
+      });
+
+      // Optionally reset the note and title after saving
+      setNote('');
+      setTitle('');
+    } catch (error) {
+      console.error('Error saving the note:', error);
+    }
   };
 
   return (
     <div style={{ backgroundColor: color, color: textColor }} className='h-screen flex flex-col p-5'>
-      {/* Title Section */}
+      {/* Title Input */}
       <input
         type="text"
-        value={title}
+        value={setCardnotes.title}
         onChange={handleTitleChange}
         placeholder="Enter note title..."
         className="mb-4 p-2 text-3xl font-bold outline-none w-full"
@@ -40,9 +58,9 @@ function TextEditor() {
         }}
       />
       <hr />
-      {/* Text Area */}
+      {/* Note Text Area */}
       <textarea
-        value={note}
+        value={setCardnotes.note}
         onChange={handleTextChange}
         className="flex-grow p-5 resize-none outline-none"
         style={{

@@ -10,9 +10,19 @@ export const ColorProvider = ({ children }) => {
   
   const [title, setTitle] = useState("second")
   const [note, setNote] = useState("second")
+  const [Cardnotes, setCardnotes] = useState([{
+    title: "asdkjhfalsd",
+    note: "sakjdlfhfjds",
+    time:"adsjfakj"
+  }])
 
+  const [selectedNote, setSelectedNote] = useState({
+    title: title,
+    note: note,
+    time: Date.now()
+  }); // State to track the selected note
   return (
-    <ColorContext.Provider value={{ color, setColor,  textColor, settextColor, title, setTitle, note, setNote }}>
+    <ColorContext.Provider value={{ color, setColor,  textColor, settextColor, title, setTitle, note, setNote, Cardnotes, setCardnotes ,selectedNote }}>
       {children}
     </ColorContext.Provider>
   );
