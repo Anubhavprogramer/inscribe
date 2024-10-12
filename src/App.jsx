@@ -14,7 +14,7 @@ function App() {
         <ColorProvider>
           <Navbar />
           <Routes>
-            <Route path="/" element={<TextEditor />} />
+            <Route path="/editor" element={<TextEditor />} />
             <Route path="/myNotes" element={<MyNotes />} />
           </Routes>
         </ColorProvider>

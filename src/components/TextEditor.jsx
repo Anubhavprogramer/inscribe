@@ -1,11 +1,12 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ColorContext } from '../Contexts/ColorContext';
 import { useUser } from '@clerk/clerk-react';
 import { addNote } from '../../convex/Notes';
 
 function TextEditor() {
-  const { color, textColor, title, setTitle, note, setNote, setCardnotes ,selectedNote } = useContext(ColorContext); // Access color context
+  const { color, textColor, selectedNote, setSelectedNote } = useContext(ColorContext); // Access color context
   const { user } = useUser(); // Get the authenticated user
+  const [debounceTimer, setDebounceTimer] = useState(null); // State for debounce timer
 
   // Redirect to login if the user is not authenticated
   useEffect(() => {
@@ -14,33 +15,46 @@ function TextEditor() {
     }
   }, [user]);
 
-  // Handlers for title and note text changes
+  // Update title and note in real-time as the user types
   const handleTitleChange = (e) => {
-    setTitle(e.target.value);
+    setSelectedNote((prevNote) => ({
+      ...prevNote,
+      title: e.target.value
+    }));
+    handleAutoSave(); // Auto-save after title change
   };
 
   const handleTextChange = (e) => {
-    setNote(e.target.value);
+    setSelectedNote((prevNote) => ({
+      ...prevNote,
+      note: e.target.value
+    }));
+    handleAutoSave(); // Auto-save after text change
+  };
+
+  // Auto-save function with debounce to avoid too frequent saves
+  const handleAutoSave = () => {
+    if (debounceTimer) {
+      clearTimeout(debounceTimer);
+    }
+    setDebounceTimer(setTimeout(() => handleSave(), 1000)); // Save after 1 second of inactivity
   };
 
   // Save note function
   const handleSave = async () => {
-    try {
-      await addNote({
-        content: note,
-        title: title,
-        user: user.emailAddress, // Save user email for identification
-        time: new Date().toISOString(), // Record the time the note was saved
-        color: color, // Save the note's background color
-        textColor: textColor // Save the note's text color
-      });
-
-      // Optionally reset the note and title after saving
-      setNote('');
-      setTitle('');
-    } catch (error) {
-      console.error('Error saving the note:', error);
-    }
+    // try {
+    //   await addNote({
+    //     content: selectedNote.note,
+    //     title: selectedNote.title,
+    //     user: user., // Save user email for identification
+    //     time: new Date().toISOString(), // Record the time the note was saved
+    //     color: color, // Save the note's background color
+    //     textColor: textColor // Save the note's text color
+    //   });
+    // } catch (error) {
+    //   console.error('Error saving the note:', error);
+    // }
+    console.log(selectedNote)
   };
 
   return (
@@ -48,19 +62,19 @@ function TextEditor() {
       {/* Title Input */}
       <input
         type="text"
-        value={setCardnotes.title}
+        value={selectedNote.title}
         onChange={handleTitleChange}
         placeholder="Enter note title..."
         className="mb-4 p-2 text-3xl font-bold outline-none w-full"
         style={{
-          backgroundColor: color, 
+          backgroundColor: color,
           color: textColor
         }}
       />
       <hr />
       {/* Note Text Area */}
       <textarea
-        value={setCardnotes.note}
+        value={selectedNote.note}
         onChange={handleTextChange}
         className="flex-grow p-5 resize-none outline-none"
         style={{
@@ -69,11 +83,6 @@ function TextEditor() {
         }}
         placeholder="Start writing your notes..."
       />
-
-      {/* Save Button */}
-      <button onClick={handleSave} className="mt-4 p-2 bg-blue-500 text-white">
-        Save Note
-      </button>
     </div>
   );
 }

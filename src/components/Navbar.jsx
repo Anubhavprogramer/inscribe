@@ -3,8 +3,12 @@ import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-reac
 import ColorPicker from "./ColorPicker";
 import Button from "./Button";
 import { ColorContext } from "../Contexts/ColorContext";
+import { useNavigate } from "react-router-dom";
+
+
 
 function Navbar() {
+  const navigate = useNavigate();
   const { color, setColor, textColor, settextColor } = useContext(ColorContext); // Access the color and functions from context
   const [isBackgroundPickerOpen, setIsBackgroundPickerOpen] = useState(false); // Control background color picker
   const [isTextPickerOpen, setIsTextPickerOpen] = useState(false); // Control text color picker
@@ -24,7 +28,7 @@ function Navbar() {
   return (
     <div className="bg-black text-white flex justify-between p-5">
       <div className="flex gap-5 justify-center items-center">
-        <a className="text-3xl" href="/">
+        <a className="text-3xl" href="/editor">
           inscribe
         </a>
         <a href="/myNotes">
