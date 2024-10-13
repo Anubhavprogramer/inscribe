@@ -1,0 +1,38 @@
+[
+    {
+      "title": "Meeting Notes",
+      "note": "Discuss the roadmap for the upcoming project. Plan next sprint activities.",
+      "time": "2024-10-13T09:00:00",
+      "color": "#FF5733",
+      "textColor": "#FFFFFF"
+    },
+    {
+      "title": "Shopping List",
+      "note": "Buy milk, bread, eggs, and coffee. Check if there are any discounts on fruits.",
+      "time": "2024-10-13T10:30:00",
+      "color": "#33FF57",
+      "textColor": "#000000"
+    },
+    {
+      "title": "Workout Routine",
+      "note": "Morning: Jog for 30 minutes. Evening: Yoga and stretching exercises.",
+      "time": "2024-10-12T07:00:00",
+      "color": "#5733FF",
+      "textColor": "#FFFFFF"
+    },
+    {
+      "title": "Book Ideas",
+      "note": "Outline character arcs and plot twists for the new book. Explore themes of friendship and loss.",
+      "time": "2024-10-11T15:45:00",
+      "color": "#FF33A1",
+      "textColor": "#FFFFFF"
+    },
+    {
+      "title": "Recipe - Chocolate Cake",
+      "note": "Ingredients: Flour, cocoa powder, eggs, butter, sugar. Baking time: 45 minutes.",
+      "time": "2024-10-10T17:15:00",
+      "color": "#33A1FF",
+      "textColor": "#000000"
+    }
+  ]
+  

@@ -4,7 +4,10 @@ import React from 'react'
 function LoginComp() {
   return (
     <>
-        <SignIn/>
+        <SignIn
+        path="/"
+        routing="path"
+        />
     </>
   )
 }

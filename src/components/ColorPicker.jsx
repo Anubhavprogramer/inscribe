@@ -7,6 +7,7 @@ function ColorPicker({ color, setColor, toggleColorPicker }) {
   // Function to update the color
   const setColorValue = (newColor) => {
     setColor(newColor); // Update the color using the prop
+    // console.log(color)
   };
 
   return (

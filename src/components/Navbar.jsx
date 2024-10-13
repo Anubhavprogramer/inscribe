@@ -31,7 +31,7 @@ function Navbar() {
         <a className="text-3xl" href="/editor">
           inscribe
         </a>
-        <a href="/myNotes">
+        <a href="/">
           My Notes
         </a>
       </div>

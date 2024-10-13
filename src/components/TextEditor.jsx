@@ -13,6 +13,16 @@ function TextEditor() {
     }
   }, [user]);
 
+  // Watch for changes in color and textColor and update selectedNote
+  useEffect(() => {
+    setSelectedNote((prevNote) => ({
+      ...prevNote,
+      color: color === "" ? prevNote.color : color,
+      textColor: textColor === "" ? prevNote.textColor : textColor,
+    }));
+    handleAutoSave();
+  }, [color, textColor, setSelectedNote]);
+
   const handleTitleChange = (e) => {
     setSelectedNote((prevNote) => ({
       ...prevNote,
@@ -38,19 +48,6 @@ function TextEditor() {
 
   const handleSave = async () => {
     console.log('Saving note...');
-    // try {
-    //   // Your saving logic here (e.g., Firebase save)
-    //   await saveNoteToDatabase({
-    //     ...selectedNote,
-    //     time: Date.now(),
-    //     color,
-    //     textColor,
-    //   });
-    //   console.log('Note saved successfully:', selectedNote);
-    // } catch (error) {
-    //   console.error('Error saving note:', error);
-    // }
-
     console.log('Note saved successfully:', selectedNote);
   };
 
@@ -63,7 +60,11 @@ function TextEditor() {
   }, [debounceTimer]);
 
   return (
-    <div style={{ backgroundColor: color, color: textColor }} className='h-screen flex flex-col p-5'>
+    <div style={{
+      backgroundColor: selectedNote.color,
+      color: selectedNote.textColor,
+    }}
+    className='h-screen flex flex-col p-5'>
       <input
         type="text"
         value={selectedNote.title}
@@ -71,8 +72,8 @@ function TextEditor() {
         placeholder="Enter note title..."
         className="mb-4 p-2 text-3xl font-bold outline-none w-full"
         style={{
-          backgroundColor: color,
-          color: textColor,
+          backgroundColor: selectedNote.color,
+          color: selectedNote.textColor,
         }}
       />
       <hr />
@@ -81,8 +82,8 @@ function TextEditor() {
         onChange={handleTextChange}
         className="flex-grow p-5 resize-none outline-none"
         style={{
-          backgroundColor: color,
-          color: textColor,
+          backgroundColor: selectedNote.color,
+          color: selectedNote.textColor,
         }}
         placeholder="Start writing your notes..."
       />
