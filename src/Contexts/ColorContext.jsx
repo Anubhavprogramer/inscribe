@@ -13,13 +13,17 @@ export const ColorProvider = ({ children }) => {
   const [Cardnotes, setCardnotes] = useState([{
     title: "asdkjhfalsd",
     note: "sakjdlfhfjds",
-    time:"adsjfakj"
+    time:"adsjfakj",
+    color,
+    textColor
   }])
 
   const [selectedNote, setSelectedNote] = useState({
     title:"",
     note:"",
-    time: Date.now()
+    time: Date.now(),
+    color,
+    textColor
   }); // State to track the selected note
   // console.log(selectedNote)
   const [allNotes, setAllNotes] = useState([]); // State to store all notes
