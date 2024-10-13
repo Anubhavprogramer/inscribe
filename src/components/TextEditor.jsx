@@ -1,12 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ColorContext } from '../Contexts/ColorContext';
 import { useUser } from '@clerk/clerk-react';
-import { addNote } from '../../convex/Notes';
+// import { addNote } from '../../convex/Notes';
+import { useMutation } from 'convex/react';
 
 function TextEditor() {
   const { color, textColor, selectedNote, setSelectedNote } = useContext(ColorContext); // Access color context
   const { user } = useUser(); // Get the authenticated user
   const [debounceTimer, setDebounceTimer] = useState(null); // State for debounce timer
+
+  // const addNoteMutation = useMutation(addNote); // Convex mutation to add a note
 
   // Redirect to login if the user is not authenticated
   useEffect(() => {
@@ -42,19 +45,19 @@ function TextEditor() {
 
   // Save note function
   const handleSave = async () => {
-    // try {
-    //   await addNote({
-    //     content: selectedNote.note,
-    //     title: selectedNote.title,
-    //     user: user., // Save user email for identification
-    //     time: new Date().toISOString(), // Record the time the note was saved
-    //     color: color, // Save the note's background color
-    //     textColor: textColor // Save the note's text color
-    //   });
-    // } catch (error) {
-    //   console.error('Error saving the note:', error);
-    // }
-    console.log(selectedNote)
+    try {
+      await addNoteMutation({
+        userId: user.id,
+        title: selectedNote.title,
+        content: selectedNote.note,
+        color, // Include note's background color
+        textColor, // Include note's text color
+        time: new Date().toISOString(), // Record the time the note was saved
+      });
+      console.log('Note saved:', selectedNote);
+    } catch (error) {
+      console.error('Error saving the note:', error);
+    }
   };
 
   return (
@@ -83,6 +86,8 @@ function TextEditor() {
         }}
         placeholder="Start writing your notes..."
       />
+
+      
     </div>
   );
 }

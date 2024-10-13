@@ -1,19 +1,14 @@
 import React, { useContext, useState, useEffect } from "react";
 import { ColorContext } from "../Contexts/ColorContext";
-import TextEditor from "./TextEditor";
 import { useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
+
 
 function MyNotes() {
   const { Cardnotes, setSelectedNote } = useContext(ColorContext); // Destructure Cardnotes from context
   const { user } = useUser(); // Get the authenticated user
   const navigate = useNavigate();
-  // Redirect to login if the user is not authenticated
-  useEffect(() => {
-    if (!user) {
-      window.location.href = "/login";
-    }
-  }, [user]);
+ 
 
   return (
     <div className="p-5">
