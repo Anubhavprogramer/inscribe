@@ -48,7 +48,7 @@ function TextEditor() {
 
   const handleSave = async () => {
     console.log('Saving note...');
-    console.log('Note saved successfully:', selectedNote);
+    // console.log('Note saved successfully:', selectedNote);
   };
 
   useEffect(() => {

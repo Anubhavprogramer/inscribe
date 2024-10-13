@@ -13,10 +13,12 @@ const firebaseConfig = {
   measurementId: "G-D01S576EVT"
 };
 
+
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-const notesRef = ref(database, "notes");
+const notesRef = ref(database, "/api/notes/");
 
 export default notesRef;
