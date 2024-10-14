@@ -1,45 +1,45 @@
-import React, { useContext, useEffect, useCallback } from "react";
+import React, { useContext, useEffect } from "react";
 import { ColorContext } from "../Contexts/ColorContext";
 import { useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
-// import { getNotes } from "../utils/FetchNotes";
-import mydata from "../data/mydata.json";
-
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { get } from "../../convex/Notes";
 
 function MyNotes() {
-  const { Cardnotes, setSelectedNote, setCardnotes } = useContext(ColorContext);
+  const { setSelectedNote, setCardnotes } = useContext(ColorContext);
   const { user } = useUser();
   const navigate = useNavigate();
-  
-  const fetchnotes = async () =>{
-    setCardnotes(mydata)
-    // const data = getNotes()
-    // setCardnotes(data)
-  }
+
+  // Fetch notes using Convex's useQuery hook
+  const data = useQuery(api.Notes.get);
 
   useEffect(() => {
     if (!user) {
       navigate("/sign-in");
     }
-    fetchnotes();
-  }, [user, navigate]);
-
-
+    if (data) {
+      setCardnotes(data);  // Set the Cardnotes state when data is fetched
+    }
+  }, [user, data, navigate, setCardnotes]);
 
   return (
     <div className="p-5">
       <h1 className="text-2xl font-bold mb-4">My Notes</h1>
-      {Cardnotes.length === 0 ? (
+
+      {data === undefined ? (
+        <p>Loading notes...</p>
+      ) : data.length === 0 ? (
         <p>No notes available.</p>
       ) : (
         <ul className="flex gap-3 flex-wrap justify-center">
-          {Cardnotes.map((card, index) => (
+          {data.map((card, index) => (
             <li
               onClick={() => {
                 setSelectedNote({
                   title: card.title,
                   note: card.note,
-                  time: Date.now(),
+                  time: card.time,  // Use card.time instead of Date.now()
                   color: card.color,
                   textColor: card.textColor,
                 });
@@ -59,19 +59,23 @@ function MyNotes() {
           ))}
         </ul>
       )}
+
       <div className="absolute bottom-5 right-5">
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-        onClick={() => {
-          setSelectedNote({
-            title: "",
-            note: "",
-            color: "",
-            textColor: "",
-            time: Date.now(),
-          });
-          navigate("/editor");
-        }} >+</button>
+          onClick={() => {
+            setSelectedNote({
+              title: "",
+              note: "",
+              color: "",
+              textColor: "",
+              time: Date.now(),
+            });
+            navigate("/editor");
+          }}
+        >
+          +
+        </button>
       </div>
     </div>
   );
