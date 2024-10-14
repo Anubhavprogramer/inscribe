@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useCallback } from "react";
 import { ColorContext } from "../Contexts/ColorContext";
 import { useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
-import { getNotes } from "../utils/FetchNotes";
-// import mydata from "../data/mydata.json";
+// import { getNotes } from "../utils/FetchNotes";
+import mydata from "../data/mydata.json";
 
 
 function MyNotes() {
@@ -13,8 +13,8 @@ function MyNotes() {
   
   const fetchnotes = async () =>{
     setCardnotes(mydata)
-    const data = getNotes()
-    setCardnotes(data)
+    // const data = getNotes()
+    // setCardnotes(data)
   }
 
   useEffect(() => {
