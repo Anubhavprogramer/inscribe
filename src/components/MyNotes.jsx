@@ -4,7 +4,6 @@ import { useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { get } from "../../convex/Notes";
 
 function MyNotes() {
   const { setSelectedNote, setCardnotes } = useContext(ColorContext);
@@ -19,9 +18,10 @@ function MyNotes() {
       navigate("/sign-in");
     }
     if (data) {
-      setCardnotes(data);  // Set the Cardnotes state when data is fetched
+      setCardnotes(data); // Set the Cardnotes state when data is fetched
     }
   }, [user, data, navigate, setCardnotes]);
+
 
   return (
     <div className="p-5">
@@ -35,22 +35,24 @@ function MyNotes() {
         <ul className="flex gap-3 flex-wrap justify-center">
           {data.map((card, index) => (
             <li
+              key={card._id || index} // Use the correct `_id` field from your data
               onClick={() => {
+                console.log(card._id, "Radha rani ji"); // Use console.log here correctly
                 setSelectedNote({
+                  _id: card._id, // Ensure to store the `_id` for updates
                   title: card.title,
                   note: card.note,
-                  time: card.time,  // Use card.time instead of Date.now()
+                  time: card.time, // Use the card's stored time
                   color: card.color,
                   textColor: card.textColor,
                 });
                 navigate("/editor");
               }}
-              key={card.id || index}
               style={{
                 backgroundColor: card.color,
                 color: card.textColor,
               }}
-              className={`border-b border-gray-200 cursor-pointer py-2 w-60 gap-4 border-2 flex flex-col px-4 h-60 rounded-lg `}
+              className={`border-b border-gray-200 cursor-pointer py-2 w-60 gap-4 border-2 flex flex-col px-4 h-60 rounded-lg`}
             >
               <h2 className="text-xl px-4 font-semibold">{card.title}</h2>
               <hr />
@@ -69,7 +71,7 @@ function MyNotes() {
               note: "",
               color: "",
               textColor: "",
-              time: Date.now(),
+              time: new Date().toISOString(), // Use the current time in ISO format
             });
             navigate("/editor");
           }}

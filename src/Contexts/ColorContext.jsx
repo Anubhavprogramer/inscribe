@@ -13,6 +13,7 @@ export const ColorProvider = ({ children }) => {
   const [Cardnotes, setCardnotes] = useState([])
 
   const [selectedNote, setSelectedNote] = useState({
+    _id: "",
     title:"",
     note:"",
     time: Date.now(),
