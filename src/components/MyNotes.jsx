@@ -22,6 +22,8 @@ function MyNotes() {
     }
   }, [user, data, navigate, setCardnotes]);
 
+  // console.log(user.emailAddresses,"radha rani");
+
 
   return (
     <div className="p-5">
@@ -37,7 +39,7 @@ function MyNotes() {
             <li
               key={card._id || index} // Use the correct `_id` field from your data
               onClick={() => {
-                console.log(card._id, "Radha rani ji"); // Use console.log here correctly
+                // console.log(card._id, "Radha rani ji"); // Use console.log here correctly
                 setSelectedNote({
                   _id: card._id, // Ensure to store the `_id` for updates
                   title: card.title,

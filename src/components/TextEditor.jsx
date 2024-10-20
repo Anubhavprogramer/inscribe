@@ -3,15 +3,18 @@ import { ColorContext } from '../Contexts/ColorContext';
 import { useUser } from '@clerk/clerk-react';
 import { useMutation } from 'convex/react'; // Import useMutation
 import { api } from '../../convex/_generated/api'; // Import your API functions
+import ColorPicker from './ColorPicker';
 
 function TextEditor() {
-  const { color, textColor, selectedNote, setSelectedNote } = useContext(ColorContext);
+  const { color,setColor, settextColor, textColor, selectedNote, setSelectedNote } = useContext(ColorContext);
   const { user } = useUser();
   const [debounceTimer, setDebounceTimer] = useState(null);
   const createTask = useMutation(api.Notes.createTask); // Initialize the createTask mutation
   const updateNote = useMutation(api.Notes.updateNote); // Initialize the updateNote mutation
   const [isSaving, setIsSaving] = useState(false);  // Loading state for saving
   const [saveStatus, setSaveStatus] = useState(''); // Save status indicator
+
+  
 
   useEffect(() => {
     if (!user) {
@@ -20,13 +23,20 @@ function TextEditor() {
   }, [user]);
 
   // Watch for changes in color and textColor and update selectedNote
-  useEffect(() => {
-    setSelectedNote((prevNote) => ({
-      ...prevNote,
-      color: color === "" ? prevNote.color : color,
-      textColor: textColor === "" ? prevNote.textColor : textColor,
-    }));
-    handleAutoSave();
+  // setting the color to context
+    
+    useEffect(() => {
+      setSelectedNote((prevNote) => ({
+        ...prevNote,
+        color: color === "" ? prevNote.color : color,
+        textColor: textColor === "" ? prevNote.textColor : textColor,
+      }));
+      // setColor(selectedNote.color ); // Set color only if it exists in selectedNote
+      // settextColor(selectedNote.textColor ); // Set textColor only if it exists in selectedNote
+      setColor((prevColor) => (prevColor === "" ? selectedNote.color : prevColor)); // Set color only if it exists in selectedNote
+      settextColor((prevTextColor) => (prevTextColor === "" ? selectedNote.textColor : prevTextColor)); // Set textColor only if it exists in selectedNote
+      
+      handleAutoSave();
   }, [color, textColor, setSelectedNote]);
 
   const handleTitleChange = (e) => {
@@ -52,45 +62,50 @@ function TextEditor() {
     setDebounceTimer(setTimeout(() => handleSave(), 1000));
   };
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    setSaveStatus('Saving...');  // Display saving status
-    console.log('Saving note...');
-    console.log(selectedNote._id);
-    try {
-      if (selectedNote._id) {
-        // If note has an _id, update it
-        await updateNote({
-          id: selectedNote._id,
-          title: selectedNote.title,
-          note: selectedNote.note,
-          time: new Date().toISOString(),
-          color: selectedNote.color,
-          textColor: selectedNote.textColor,
-          email: user?.email || "",
-        });
-        setSaveStatus('Note updated successfully!');
-      } else {
-        // Otherwise, create a new note
-        const newNoteId = await createTask({
-          title: selectedNote.title,
-          note: selectedNote.note,
-          time: new Date().toISOString(),
-          color: selectedNote.color,
-          textColor: selectedNote.textColor,
-          email: user?.email || "",
-        });
-        setSelectedNote((prevNote) => ({ ...prevNote, _id: newNoteId }));
-        setSaveStatus('Note created successfully!');
-      }
-      console.log('Note saved successfully:', selectedNote);
-    } catch (error) {
-      setSaveStatus('Error saving note');  // Error message
-      console.error('Error saving note:', error);
-    } finally {
-      setIsSaving(false); // Reset loading state
+const handleSave = async () => {
+  setIsSaving(true);
+  setSaveStatus('Saving...');  // Display saving status
+  console.log('Saving note...');
+  console.log(selectedNote._id);
+  try {
+    if (selectedNote._id) {
+      // If note has an _id, update it
+      await updateNote({
+        _id: selectedNote._id,
+        title: selectedNote.title,
+        note: selectedNote.note,
+        time: new Date().toISOString(),
+        color: selectedNote.color,
+        textColor: selectedNote.textColor,
+        email: user.emailAddresses?.email || "",
+      });
+      setSaveStatus('Note updated successfully!');
+    } else {
+      // Otherwise, create a new note
+      const newNoteId = await createTask({
+        title: selectedNote.title,
+        note: selectedNote.note,
+        time: new Date().toISOString(),
+        color: selectedNote.color,
+        textColor: selectedNote.textColor,
+        email: user.emailAddresses.email || "",
+      });
+
+      // newNoteId will have the _id returned by the backend
+      setSelectedNote((prevSelectedNote) => ({ 
+        ...prevSelectedNote, 
+        _id: newNoteId._id // Properly set the new _id
+      }));
+      setSaveStatus('Note created successfully!');
     }
-  };
+  } catch (error) {
+    setSaveStatus('Error saving note');  // Error message
+    console.error('Error saving note:', error);
+  } finally {
+    setIsSaving(false); // Reset loading state
+  }
+};
+  
 
   useEffect(() => {
     return () => {
