@@ -68,3 +68,22 @@ export const updateNote = mutation({
     // console.log("Note updated:", { _id, title, note, time, color, textColor, email });
   }
 });
+
+
+export const deleteNote = mutation({
+  args: {
+    _id: v.id("notes"), // Expecting the ID of the note to delete
+  },
+  handler: async (ctx, args) => {
+    const { _id } = args;
+
+    // Check if the note exists
+    const noteData = await ctx.db.get(_id);
+    if (!noteData) {
+      throw new Error("Note not found");
+    }
+
+    // Delete the note from the database
+    await ctx.db.delete(_id);
+  },
+});

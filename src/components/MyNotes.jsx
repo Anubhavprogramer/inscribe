@@ -4,6 +4,9 @@ import { useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import { MdAdd } from "react-icons/md";
+import { RiDeleteBin3Fill } from "react-icons/ri";
+import { useMutation } from "convex/react";
 
 function MyNotes() {
   const { setSelectedNote, setCardnotes } = useContext(ColorContext);
@@ -22,7 +25,18 @@ function MyNotes() {
     }
   }, [user, data, navigate, setCardnotes]);
 
-  // console.log(user.emailAddresses,"radha rani");
+  // console.log(user.emailAddresses,"radha rani"); 
+
+  const deleteNote = useMutation(api.Notes.deleteNote);
+
+  const handleDeleteNote = async (noteId) => {
+    try {
+      await deleteNote({ _id: noteId }); // Use the deleteNote mutation
+      console.log(`Note with id ${noteId} deleted.`);
+    } catch (error) {
+      console.error("Error deleting note:", error);
+    }
+  };
 
 
   return (
@@ -54,11 +68,19 @@ function MyNotes() {
                 backgroundColor: card.color,
                 color: card.textColor,
               }}
-              className={`border-b border-gray-200 cursor-pointer py-2 w-60 gap-4 border-2 flex flex-col px-4 h-60 rounded-lg`}
+              className={`border-b border-gray-200 relative cursor-pointer py-2 w-60 gap-4 border-2 flex flex-col px-4 h-60 rounded-lg`}
             >
               <h2 className="text-xl px-4 font-semibold">{card.title}</h2>
               <hr />
               <p className="px-4">{card.note}</p>
+
+              <button
+                onClick={() => handleDeleteNote(card._id)} // Call handleDeleteNote on click
+                className=" py-1 px-4 mt-2 z-50 absolute top-0 right-0" // Add a class to position the button
+              >
+                <RiDeleteBin3Fill />
+              </button>
+
             </li>
           ))}
         </ul>
@@ -78,7 +100,7 @@ function MyNotes() {
             navigate("/editor");
           }}
         >
-          +
+          <MdAdd />
         </button>
       </div>
     </div>

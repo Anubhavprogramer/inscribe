@@ -4,6 +4,7 @@ import App from './App.jsx'
 import './index.css'
 import { ClerkProvider } from '@clerk/clerk-react'
 import { ConvexProvider, ConvexReactClient } from 'convex/react'
+import { IconContext } from 'react-icons'
 // console.log("Convex URL:", import.meta.env.VITE_CONVEX_URL);
 
 const convexClient = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL)
@@ -15,11 +16,13 @@ if (!PUBLISHABLE_KEY) {
 }
 
 createRoot(document.getElementById('root')).render(
+  <IconContext.Provider value={{ className: 'react-icons', color: "white" }}>
   <StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
       <ConvexProvider client={convexClient}>
         <App />
       </ConvexProvider>
     </ClerkProvider>
-  </StrictMode>,
+  </StrictMode>
+  </IconContext.Provider>
 )
