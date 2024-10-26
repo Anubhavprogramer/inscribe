@@ -29,7 +29,7 @@ const LandingPage = () => {
       {/* Body */}
       <div className="flex flex-col md:flex-row justify-center items-center h-full px-5 md:px-10 gap-5 md:gap-7 mt-10 md:mt-0">
         <div className="text-start w-full md:w-1/2 flex flex-col gap-5 animate-fade-right">
-          <span className="text-3xl sm:text-4xl md:text-7xl font-extrabold  font-lexend">Inscribe</span>
+          <span className="text-7xl sm:text-4xl md:text-7xl font-extrabold  font-lexend">Inscribe</span>
           <p className="text-4xl sm:text-5xl lg:text-5xl font-bold leading-tight">
             Your personal Note-Taking App
           </p>
