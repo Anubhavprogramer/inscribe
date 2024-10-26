@@ -32,7 +32,7 @@ const LandingPage = () => {
           <p className="text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-tight">
             Your personal Note-Taking App
           </p>
-          <span className="text-3xl sm:text-4xl md:text-5xl font-semibold font-lexend">Inscribe</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl font-semibold  font-lexend">Inscribe</span>
           <span className="text-md md:text-lg">Where your thoughts find their perfect place.</span>
           <SignInButton>
             <button className="bg-purple-700 w-32 md:w-40 text-white py-2 md:py-3 rounded-xl text-sm md:text-md transition-transform transform hover:scale-105 hover:translate-y-1 duration-300">
