@@ -1,11 +1,67 @@
-import React from 'react'
+import { SignInButton, SignUpButton } from "@clerk/clerk-react";
+import React from "react";
+import img1 from "../assets/img1.png";
+import logo from "../assets/logo.png";
+import { BsGithub, BsInstagram, BsLinkedin, BsYoutube } from "react-icons/bs";
 
 const LandingPage = () => {
   return (
-    <div>
-      
-    </div>
-  )
-}
+    <div className="bg-gradient-to-b from-purple-500 to-white min-h-screen flex flex-col">
+      {/* Navbar */}
+      <nav className="p-5 md:p-10 bg-black text-white">
+        <ul className="flex justify-between items-center">
+          <img src={logo} alt="Logo" className="w-20 md:w-28" />
+          <li className="flex gap-4 md:gap-10">
+            <SignUpButton>
+              <button className="bg-purple-600 hover:bg-purple-700 w-20  h-7 rounded-lg text-xs md:text-sm">
+                Signup
+              </button>
+            </SignUpButton>
+            <SignInButton>
+              <button className="bg-purple-600 hover:bg-purple-700 w-20 h-7 rounded-lg text-xs md:text-sm">
+                Signin
+              </button>
+            </SignInButton>
+          </li>
+        </ul>
+      </nav>
 
-export default LandingPage
+      {/* Body */}
+      <div className="flex flex-col md:flex-row justify-center items-center h-full px-5 lg:my-0  md:px-10 gap-5 md:gap-7 mt-10 md:mt-0">
+        <div className="text-start w-full md:w-1/2 flex flex-col gap-5">
+          <p className="text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-tight">
+            Your personal Note-Taking App
+          </p>
+          <span className="text-3xl sm:text-4xl md:text-5xl font-semibold hover:underline font-lexend">Inscribe</span>
+          <span className="text-md md:text-lg">
+            Where your thoughts find their perfect place.
+          </span>
+          <SignInButton>
+            <button className="bg-purple-700 w-32 md:w-40 text-white py-2 md:py-3 rounded-xl text-sm md:text-md">
+              Get Started
+            </button>
+          </SignInButton>
+        </div>
+        <div className="w-full md:w-1/2  flex justify-center md:m-20">
+          <img className="w-2/3 md:w-full" src={img1} alt="Illustration" />
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-black text-white p-5 flex flex-col justify-center items-center mt-10 md:mt-20">
+        <span className="text-center text-xs md:text-base">
+          Simplicity meets creativity – inscribe your ideas effortlessly.
+        </span>
+        <div className="flex gap-5 md:gap-10 my-4">
+          <a href="#" aria-label="YouTube"><BsYoutube /></a>
+          <a href="#" aria-label="GitHub"><BsGithub /></a>
+          <a href="#" aria-label="Instagram"><BsInstagram /></a>
+          <a href="#" aria-label="LinkedIn"><BsLinkedin /></a>
+        </div>
+        <span className="text-xs md:text-sm">© 2021 Inscribe</span>
+      </footer>
+    </div>
+  );
+};
+
+export default LandingPage;
