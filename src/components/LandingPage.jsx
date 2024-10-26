@@ -29,10 +29,10 @@ const LandingPage = () => {
       {/* Body */}
       <div className="flex flex-col md:flex-row justify-center items-center h-full px-5 md:px-10 gap-5 md:gap-7 mt-10 md:mt-0">
         <div className="text-start w-full md:w-1/2 flex flex-col gap-5 animate-fade-right">
-          <p className="text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-tight">
+          <span className="text-3xl sm:text-4xl md:text-7xl font-extrabold  font-lexend">Inscribe</span>
+          <p className="text-4xl sm:text-5xl lg:text-5xl font-bold leading-tight">
             Your personal Note-Taking App
           </p>
-          <span className="text-3xl sm:text-4xl md:text-5xl font-semibold  font-lexend">Inscribe</span>
           <span className="text-md md:text-lg">Where your thoughts find their perfect place.</span>
           <SignInButton>
             <button className="bg-purple-700 w-32 md:w-40 text-white py-2 md:py-3 rounded-xl text-sm md:text-md transition-transform transform hover:scale-105 hover:translate-y-1 duration-300">
