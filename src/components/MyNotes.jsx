@@ -12,7 +12,7 @@ function MyNotes() {
   const { setSelectedNote, setCardnotes } = useContext(ColorContext);
   const { user } = useUser();
   const navigate = useNavigate();
-
+  // console.log(user.emailAddresses, "radha rani");
   // Fetch notes using Convex's useQuery hook
   const data = useQuery(api.Notes.get);
 

@@ -13,7 +13,8 @@ function TextEditor() {
   const updateNote = useMutation(api.Notes.updateNote); // Initialize the updateNote mutation
   const [isSaving, setIsSaving] = useState(false);  // Loading state for saving
   const [saveStatus, setSaveStatus] = useState(''); // Save status indicator
-
+  const emailAddress = user.emailAddresses[0]?.emailAddress || "";
+  // console.log(emailAddress);
   
 
   useEffect(() => {
@@ -77,7 +78,7 @@ const handleSave = async () => {
         time: new Date().toISOString(),
         color: selectedNote.color,
         textColor: selectedNote.textColor,
-        email: user.emailAddresses?.email || "",
+        email: emailAddress,
       });
       setSaveStatus('Note updated successfully!');
     } else {
@@ -88,7 +89,7 @@ const handleSave = async () => {
         time: new Date().toISOString(),
         color: selectedNote.color,
         textColor: selectedNote.textColor,
-        email: user.emailAddresses.email || "",
+        email: emailAddress,
       });
 
       // newNoteId will have the _id returned by the backend
