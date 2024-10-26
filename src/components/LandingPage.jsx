@@ -14,12 +14,12 @@ const LandingPage = () => {
           <li className="flex gap-4 md:gap-10">
             <SignUpButton>
               <button className="bg-purple-600 hover:bg-purple-700 w-20 h-7 rounded-lg text-xs md:text-sm transition duration-300 transform hover:scale-105">
-                Signup
+                Sign Up
               </button>
             </SignUpButton>
             <SignInButton>
               <button className="bg-purple-600 hover:bg-purple-700 w-20 h-7 rounded-lg text-xs md:text-sm transition duration-300 transform hover:scale-105">
-                Signin
+                Sign In
               </button>
             </SignInButton>
           </li>
