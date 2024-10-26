@@ -4,9 +4,14 @@ import { v } from "convex/values";
 import { query } from "./_generated/server";
 
 export const get = query({
-  args: {},
-  handler: async (ctx) => {
-    return await ctx.db.query("notes").collect();
+  args: { email: v.string() }, // Add an argument for the email
+  handler: async (ctx, { email }) => {
+    console.log(email);
+    // Query notes for the authenticated user
+    const notes = await ctx.db.query("notes").filter((note) => note.eq(note.field("email"),email)).collect();
+    // const notes = await ctx.db.query("notes").collect();
+    console.log(notes.length);
+    return notes;
   },
 });
 
