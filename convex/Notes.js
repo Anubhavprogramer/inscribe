@@ -6,11 +6,11 @@ import { query } from "./_generated/server";
 export const get = query({
   args: { email: v.string() }, // Add an argument for the email
   handler: async (ctx, { email }) => {
-    console.log(email);
+    // console.log(email);
     // Query notes for the authenticated user
     const notes = await ctx.db.query("notes").filter((note) => note.eq(note.field("email"),email)).collect();
     // const notes = await ctx.db.query("notes").collect();
-    console.log(notes.length);
+    // console.log(notes.length);
     return notes;
   },
 });

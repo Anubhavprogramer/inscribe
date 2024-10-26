@@ -6,6 +6,7 @@ import { ColorProvider } from "./Contexts/ColorContext";
 import MyNotes from "./components/MyNotes";
 import LoginComp from "./components/LoginComp";
 import { SignedIn, SignedOut } from "@clerk/clerk-react";
+import LandingPage from "./components/LandingPage";
 
 function App() {
   return (
@@ -22,7 +23,7 @@ function App() {
 
       <SignedOut>
         <Routes>
-          <Route path="/" element={<LoginComp />} />
+          <Route path="/" element={<LandingPage/>} />
         </Routes>
       </SignedOut>
     </Router>
