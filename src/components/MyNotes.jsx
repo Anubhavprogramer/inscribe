@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ColorContext } from "../Contexts/ColorContext";
 import { useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
@@ -7,103 +7,234 @@ import { api } from "../../convex/_generated/api";
 import { MdAdd } from "react-icons/md";
 import { RiDeleteBin3Fill } from "react-icons/ri";
 import { useMutation } from "convex/react";
+import { FiSearch } from 'react-icons/fi';
+
+function formatDate(isoString) {
+  if (!isoString) return "";
+  const date = new Date(isoString);
+  return date.toLocaleDateString(undefined, {
+    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+  });
+}
 
 function MyNotes() {
   const { setSelectedNote, setCardnotes } = useContext(ColorContext);
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const navigate = useNavigate();
-  
-  const emailAddress = user.emailAddresses[0]?.emailAddress || "";
+  const [error, setError] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [noteToDelete, setNoteToDelete] = useState(null);
+  const [search, setSearch] = useState("");
 
+  const emailAddress = user?.emailAddresses?.[0]?.emailAddress || "";
   const data = useQuery(api.Notes.get, { email: emailAddress });
 
   useEffect(() => {
-    if (!user) {
+    if (isLoaded && !user) {
       navigate("/sign-in");
     }
     if (data) {
-      setCardnotes(data); // Set the Cardnotes state when data is fetched
+      setCardnotes(data);
     }
-  }, [user, data, navigate, setCardnotes]);
-
-  // console.log(user.emailAddresses,"radha rani"); 
+  }, [user, isLoaded, data, navigate, setCardnotes]);
 
   const deleteNote = useMutation(api.Notes.deleteNote);
 
-  const handleDeleteNote = async (noteId) => {
+  const handleDeleteNote = async () => {
+    if (!noteToDelete) return;
+    setDeletingId(noteToDelete._id);
     try {
-      await deleteNote({ _id: noteId }); // Use the deleteNote mutation
-      console.log(`Note with id ${noteId} deleted.`);
+      await deleteNote({ _id: noteToDelete._id });
+      setShowConfirm(false);
+      setNoteToDelete(null);
     } catch (error) {
-      console.error("Error deleting note:", error);
+      setError("Failed to delete note");
+    } finally {
+      setDeletingId(null);
     }
   };
 
+  // Filter notes by search
+  const filteredData = Array.isArray(data) ? data.filter(card =>
+    (card.title || "Untitled").toLowerCase().includes(search.toLowerCase()) ||
+    (card.note || "").toLowerCase().includes(search.toLowerCase())
+  ) : [];
 
-  return (
-    <div className="p-5 h-full relative">
-      <h1 className="text-2xl font-bold mb-4">My Notes</h1>
-
-      {data === undefined ? (
-        <p>Loading notes...</p>
-      ) : data.length === 0 ? (
-        <p>No notes available.</p>
-      ) : (
-        <ul className="flex gap-3 flex-wrap justify-center">
-          {data.map((card, index) => (
-            <li
-              key={card._id || index} // Use the correct `_id` field from your data
-              onClick={() => {
-                // console.log(card._id, "Radha rani ji"); // Use console.log here correctly
-                setSelectedNote({
-                  _id: card._id, // Ensure to store the `_id` for updates
-                  title: card.title,
-                  note: card.note,
-                  time: card.time, // Use the card's stored time
-                  color: card.color,
-                  textColor: card.textColor,
-                });
-                navigate("/editor");
-              }}
-              style={{
-                backgroundColor: card.color,
-                color: card.textColor,
-              }}
-              className={`border-b border-gray-200 relative cursor-pointer py-2 w-60 gap-4 border-2 flex flex-col px-4 h-60 rounded-lg`}
-            >
-              <h2 className="text-xl px-4 font-semibold">{card.title}</h2>
-              <hr />
-              <p className="px-4">{card.note}</p>
-
-              <button
-                onClick={() => handleDeleteNote(card._id)} // Call handleDeleteNote on click
-                className=" py-1 px-4 mt-2 z-50 absolute top-0 right-0" // Add a class to position the button
-              >
-                <RiDeleteBin3Fill />
-              </button>
-
-            </li>
+  // Loading skeleton
+  if (!isLoaded || data === undefined) {
+    return (
+      <div className="p-8 min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100">
+        <div className="animate-pulse grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-5xl">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="bg-white rounded-xl shadow-md h-56 w-full p-6 flex flex-col gap-4">
+              <div className="h-6 bg-gray-200 rounded w-1/2"></div>
+              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+              <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/3 mt-auto"></div>
+            </div>
           ))}
-        </ul>
-      )}
+        </div>
+      </div>
+    );
+  }
 
-      <div className="absolute bottom-5 right-5">
+  // Error state
+  if (error) {
+    return (
+      <div className="p-8 min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded mb-4 max-w-lg w-full">
+          {error}
+          <button 
+            onClick={() => setError(null)}
+            className="ml-2 text-red-700 hover:text-red-900 float-right font-bold"
+          >
+            ×
+          </button>
+        </div>
+        <h1 className="text-3xl font-bold mb-4">My Notes</h1>
+      </div>
+    );
+  }
+
+  // Empty state
+  if (data.length === 0) {
+    return (
+      <div className="p-8 min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100">
+        <h1 className="text-3xl font-bold mb-4">My Notes</h1>
+        <p className="text-lg text-gray-600 mb-8">You have no notes yet. Click the + button to create your first note!</p>
         <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+          className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-bold py-3 px-6 rounded-full shadow-lg text-2xl flex items-center gap-2"
           onClick={() => {
             setSelectedNote({
               title: "",
               note: "",
-              color: "",
-              textColor: "",
-              time: new Date().toISOString(), // Use the current time in ISO format
+              color: "#ffffff",
+              textColor: "#000000",
+              time: new Date().toISOString(),
             });
             navigate("/editor");
           }}
         >
-          <MdAdd />
+          <MdAdd size={32} /> New Note
         </button>
       </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen w-full bg-gradient-to-br from-purple-100 to-blue-100 relative flex flex-col items-center" style={{ minHeight: '100vh', width: '100vw' }}>
+      <h1 className="text-3xl font-bold mb-4 text-center w-full mt-6">My Notes</h1>
+      <div className="flex justify-center mb-4 w-full px-2 sm:px-0">
+        <div className="relative w-full max-w-lg">
+          <input
+            type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search notes..."
+            className="w-full py-3 pl-12 pr-4 rounded-full shadow focus:outline-none focus:ring-2 focus:ring-purple-400 text-lg bg-white"
+          />
+          <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full px-4 sm:px-6 md:px-8 py-8">
+        {filteredData.length === 0 ? (
+          <div className="col-span-full text-center text-gray-500 text-lg">No notes found.</div>
+        ) : (
+          filteredData.map((card) => (
+            <div
+              key={card._id}
+              onClick={() => {
+                setSelectedNote({
+                  _id: card._id,
+                  title: card.title || "",
+                  note: card.note || "",
+                  time: card.time || new Date().toISOString(),
+                  color: card.color || "#ffffff",
+                  textColor: card.textColor || "#000000",
+                  pinned: card.pinned || false,
+                });
+                navigate("/editor");
+              }}
+              style={{
+                backgroundColor: card.color || "#ffffff",
+                color: card.textColor || "#222222",
+                backgroundImage: 'radial-gradient(circle at bottom right, rgba(255,255,255,0.3) 0%, transparent 40%)',
+              }}
+              className="relative rounded-3xl p-6 min-h-[16rem] cursor-pointer hover:shadow-xl transition-shadow duration-200 flex flex-col group"
+            >
+              {/* Delete Button */}
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  setShowConfirm(true);
+                  setNoteToDelete(card);
+                }}
+                className="absolute top-4 right-4 bg-white hover:bg-gray-200 w-8 h-8 rounded-full transition-all shadow-md"
+                title="Delete note"
+                disabled={deletingId === card._id}
+              >
+                {/* Icon removed for minimalist design */}
+              </button>
+              
+              <h2 className="text-2xl font-bold mb-2 truncate">{card.title || "Untitled"}</h2>
+              <hr className="border-t border-gray-500/30 my-1" />
+              <p className="flex-1 whitespace-pre-wrap break-words text-base mt-2 max-h-48 overflow-y-auto">{card.note || "No content"}</p>
+              <div className="text-sm text-gray-800/80 mt-auto pt-2">
+                <span>{formatDate(card.time)}</span>
+                {deletingId === card._id && <span className="text-red-500 ml-2 animate-pulse">Deleting...</span>}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Floating Add Button */}
+      <button
+        className="fixed bottom-6 right-6 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-bold py-4 px-6 rounded-full shadow-lg text-3xl flex items-center gap-2 z-50"
+        onClick={() => {
+          setSelectedNote({
+            title: "",
+            note: "",
+            color: "#ffffff",
+            textColor: "#000000",
+            time: new Date().toISOString(),
+          });
+          navigate("/editor");
+        }}
+        title="Add new note"
+        style={{ minWidth: '64px', minHeight: '64px' }}
+      >
+        <MdAdd size={36} />
+      </button>
+
+      {/* Delete Confirmation Modal */}
+      {showConfirm && noteToDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl p-8 max-w-sm w-full flex flex-col items-center">
+            <h2 className="text-xl font-bold mb-4 text-red-600">Delete Note?</h2>
+            <p className="mb-6 text-gray-700 text-center">Are you sure you want to delete <span className="font-semibold">{noteToDelete.title || "Untitled"}</span>? This action cannot be undone.</p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => {
+                  setShowConfirm(false);
+                  setNoteToDelete(null);
+                }}
+                className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteNote}
+                className="px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white font-semibold"
+                disabled={deletingId === noteToDelete._id}
+              >
+                {deletingId === noteToDelete._id ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

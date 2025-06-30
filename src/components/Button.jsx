@@ -1,17 +1,33 @@
-import React from 'react';
+import { useContext } from "react";
+import { ColorContext } from "../Contexts/ColorContext";
+import PropTypes from 'prop-types';
 
-const Button = ({ toggleColorPicker,text, color }) => { // Destructure toggleColorPicker from props
-    // console.log(text);
-    // const {color} = useContext(ColorContext);
+function Button({ toggleColorPicker, text, color }) {
+  const { setColor } = useContext(ColorContext);
+
+  const handleClick = () => {
+    if (toggleColorPicker) {
+      toggleColorPicker();
+    } else if (color) {
+      setColor(color);
+    }
+  };
+
   return (
-    <button 
-      style={{ backgroundColor: color }} // Correct the style
-      onClick={toggleColorPicker} // Correct the click handler
-      className="relative block w-7 h-7 rounded-full m-0 bg-white overflow-hidden outline-none cursor-pointer border-0"
+    <button
+      onClick={handleClick}
+      className="w-10 h-10 rounded-full border-2 border-white"
+      style={{ backgroundColor: color || "#ffffff" }}
     >
-       {text} 
+      {text}
     </button>
   );
+}
+
+Button.propTypes = {
+  toggleColorPicker: PropTypes.func,
+  text: PropTypes.string,
+  color: PropTypes.string,
 };
 
 export default Button;

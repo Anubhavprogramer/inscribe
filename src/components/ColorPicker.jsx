@@ -1,6 +1,6 @@
-import React from "react";
 import { HexColorPicker } from "react-colorful";
 import Button from "./Button";
+import PropTypes from 'prop-types';
 
 function ColorPicker({ color, setColor, toggleColorPicker }) {
   
@@ -20,5 +20,11 @@ function ColorPicker({ color, setColor, toggleColorPicker }) {
     </div>
   );
 }
+
+ColorPicker.propTypes = {
+  color: PropTypes.string.isRequired,
+  setColor: PropTypes.func.isRequired,
+  toggleColorPicker: PropTypes.func.isRequired,
+};
 
 export default ColorPicker;

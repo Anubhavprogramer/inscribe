@@ -9,5 +9,6 @@ export default defineSchema({
     color: v.string(),
     textColor: v.string(),
     email: v.string(),
+    pinned: v.optional(v.boolean()), // Added for pinning support
   }),
 });

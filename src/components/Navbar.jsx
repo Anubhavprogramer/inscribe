@@ -1,65 +1,84 @@
-import React, { useContext, useState } from "react";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
-import ColorPicker from "./ColorPicker";
-import Button from "./Button";
+import { useContext, useState, useEffect } from "react";
+import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/clerk-react";
 import { ColorContext } from "../Contexts/ColorContext";
-import { useNavigate } from "react-router-dom";
-
-
+import { useNavigate, useLocation } from "react-router-dom";
+import { MdAdd } from "react-icons/md";
+import { FiSun, FiMoon } from "react-icons/fi";
 
 function Navbar() {
   const navigate = useNavigate();
-  const { color, setColor, textColor, settextColor } = useContext(ColorContext); // Access the color and functions from context
-  const [isBackgroundPickerOpen, setIsBackgroundPickerOpen] = useState(false); // Control background color picker
-  const [isTextPickerOpen, setIsTextPickerOpen] = useState(false); // Control text color picker
+  const location = useLocation();
+  const { setSelectedNote } = useContext(ColorContext);
+  const { user } = useUser();
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
-  // Toggle background color picker
-  const toggleBackgroundColorPicker = () => {
-    setIsBackgroundPickerOpen(!isBackgroundPickerOpen);
-    setIsTextPickerOpen(false); // Close the text color picker if it's open
-  };
-
-  // Toggle text color picker
-  const toggleTextColorPicker = () => {
-    setIsTextPickerOpen(!isTextPickerOpen);
-    setIsBackgroundPickerOpen(false); // Close the background color picker if it's open
+  // New Note handler
+  const handleNewNote = () => {
+    setSelectedNote({
+      title: "",
+      note: "",
+      color: "#ffffff",
+      textColor: "#000000",
+      time: new Date().toISOString(),
+    });
+    navigate("/editor");
   };
 
   return (
-    <div className="bg-black text-white flex justify-between p-5">
-      <div className="flex gap-5 justify-center items-center">
-        <a className="text-3xl" href="/editor">
-          inscribe
-        </a>
-        <a href="/"  className="text-md sm:text-sm">
-          My Notes
-        </a>
+    <nav className={`w-full px-4 sm:px-10 py-4 flex items-center justify-between shadow-md bg-white text-black transition-colors duration-300`}>
+      {/* Left side: Nav items */}
+      <div className="flex items-center gap-4 flex-1">
+        {/* Hamburger for mobile */}
+        <div className="md:hidden flex items-center">
+          <button onClick={() => setShowMobileMenu(m => !m)} className="p-2 rounded-full bg-gray-100 hover:bg-gray-200">
+            <span className="sr-only">Menu</span>
+            <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+        </div>
+         {/* Desktop Nav Links */}
+        <div className="hidden md:flex items-center gap-8">
+          <button className={`text-lg font-semibold hover:text-purple-600 transition ${location.pathname === '/' ? 'underline underline-offset-4' : ''}`} onClick={() => navigate("/")}>My Notes</button>
+          <button className="flex items-center gap-1 text-sm font-semibold px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow hover:from-purple-600 hover:to-blue-600 transition" onClick={handleNewNote}><MdAdd size={20} /> New Note</button>
+        </div>
       </div>
-      <div className="flex justify-center items-center gap-5">
-        {/* Button for text color picker */}
-        <Button text={"🖉"} color={"Black"} toggleColorPicker={toggleTextColorPicker} />
-        {isTextPickerOpen && (
-          <div className="absolute top-20 right-5 p-3 rounded shadow-lg bg-white">
-            <ColorPicker color={textColor} setColor={settextColor} toggleColorPicker={toggleTextColorPicker} />
-          </div>
-        )}
 
-        {/* Button for background color picker */}
-        <Button toggleColorPicker={toggleBackgroundColorPicker} color={color} />
-        {isBackgroundPickerOpen && (
-          <div className="absolute top-20 right-5 p-3 rounded shadow-lg bg-white">
-            <ColorPicker color={color} setColor={setColor} toggleColorPicker={toggleBackgroundColorPicker} />
-          </div>
-        )}
+      {/* Center: Logo */}
+      <div className="flex items-center justify-center">
+        <span className="text-3xl font-extrabold tracking-tight cursor-pointer select-none text-purple-600 hover:text-purple-800 transition" onClick={() => navigate("/")}>inscribe</span>
+      </div>
 
+      {/* Right side: user only */}
+      <div className="flex items-center gap-4 flex-1 justify-end">
         <SignedOut>
-          <SignInButton />
+          <SignInButton>
+            <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-full font-semibold transition">Sign In</button>
+          </SignInButton>
         </SignedOut>
         <SignedIn>
-          <UserButton />
+          <div className="relative group">
+            {user?.imageUrl ? (
+              <img src={user.imageUrl} alt="avatar" className="w-10 h-10 rounded-full border-2 border-purple-400 shadow cursor-pointer" />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-blue-400 flex items-center justify-center text-white font-bold text-xl cursor-pointer border-2 border-purple-400 shadow">{user?.firstName?.[0] || user?.emailAddress?.[0] || "U"}</div>
+            )}
+            <div className="absolute right-0 mt-2 w-56 bg-white text-black rounded-xl shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity z-50 p-4 flex flex-col gap-2">
+              <div className="font-bold text-lg">{user?.fullName || user?.emailAddress}</div>
+              <div className="text-sm text-gray-500 break-all">{user?.primaryEmailAddress?.emailAddress}</div>
+              <div className="border-t border-gray-200 my-2"></div>
+              <UserButton afterSignOutUrl="/" />
+            </div>
+          </div>
         </SignedIn>
       </div>
-    </div>
+
+      {/* Mobile menu dropdown */}
+      {showMobileMenu && (
+        <div className="md:hidden absolute top-16 left-4 bg-white rounded-xl shadow-lg flex flex-col gap-2 p-4 z-50 min-w-[160px]">
+          <button className={`text-lg font-semibold hover:text-purple-600 transition text-left ${location.pathname === '/' ? 'underline underline-offset-4' : ''}`} onClick={() => {navigate("/"); setShowMobileMenu(false);}}>My Notes</button>
+          <button className="flex items-center gap-1 text-sm font-semibold px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow hover:from-purple-600 hover:to-blue-600 transition" onClick={() => {handleNewNote(); setShowMobileMenu(false);}}><MdAdd size={20} /> New Note</button>
+        </div>
+      )}
+    </nav>
   );
 }
 

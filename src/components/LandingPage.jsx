@@ -1,5 +1,4 @@
 import { SignInButton, SignUpButton } from "@clerk/clerk-react";
-import React from "react";
 import img1 from "../assets/img1.png";
 import logo from "../assets/logo.png";
 import { BsGithub, BsInstagram, BsLinkedin, BsYoutube } from "react-icons/bs";

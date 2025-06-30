@@ -1,30 +1,35 @@
-import React, { useState, createContext } from 'react';
+import { useState, createContext } from 'react';
+import PropTypes from 'prop-types';
 
 // Create the context
 export const ColorContext = createContext();
 
 // Create the provider
 export const ColorProvider = ({ children }) => {
-  const [color, setColor] = useState("#fffff"); // Initialize with default color
+  const [color, setColor] = useState("#ffffff"); // Fix: was "#fffff" (invalid hex)
   const [textColor, settextColor] = useState("#000000"); // Initialize with default color
   
-  const [title, setTitle] = useState("second")
-  const [note, setNote] = useState("second")
+  const [title, setTitle] = useState("")
+  const [note, setNote] = useState("")
   const [Cardnotes, setCardnotes] = useState([])
 
   const [selectedNote, setSelectedNote] = useState({
     _id: "",
-    title:"",
-    note:"",
-    time: Date.now(),
-    color,
-    textColor
+    title: "",
+    note: "",
+    time: new Date().toISOString(),
+    color: "#ffffff",
+    textColor: "#000000"
   }); // State to track the selected note
-  // console.log(selectedNote)
+  
   const [allNotes, setAllNotes] = useState([]); // State to store all notes
   return (
     <ColorContext.Provider value={{ color, setColor,  textColor, settextColor, title, setTitle, note, setNote, Cardnotes, setCardnotes ,selectedNote,setSelectedNote,allNotes, setAllNotes }}>
       {children}
     </ColorContext.Provider>
   );
+};
+
+ColorProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };

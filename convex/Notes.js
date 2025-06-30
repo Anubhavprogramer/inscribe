@@ -1,4 +1,3 @@
-
 import { mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { query } from "./_generated/server";
@@ -24,6 +23,7 @@ export const createTask = mutation({
     color: v.string(),
     textColor: v.string(),
     email: v.string(),
+    pinned: v.optional(v.boolean()),
    },
   handler: async (ctx, args) => {
     const notesID = await ctx.db.insert("notes", { 
@@ -33,6 +33,7 @@ export const createTask = mutation({
         color: args.color,
         textColor: args.textColor,
         email: args.email,
+        pinned: args.pinned,
     });
     
     // Log the newly created note ID
@@ -54,9 +55,10 @@ export const updateNote = mutation({
     color: v.optional(v.string()),
     textColor: v.optional(v.string()),
     email: v.optional(v.string()),
+    pinned: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
-    const { _id, title, note, time, color, textColor, email } = args;
+    const { _id, title, note, time, color, textColor, email, pinned } = args;
 
     // Get the note with the given _id
     const noteData = await ctx.db.get(_id);
@@ -67,7 +69,7 @@ export const updateNote = mutation({
     }
 
     // Patch the note with updated fields
-    await ctx.db.patch(_id, { title, note, time, color, textColor, email });
+    await ctx.db.patch(_id, { title, note, time, color, textColor, email, pinned });
 
     // Optionally log the updated note
     // console.log("Note updated:", { _id, title, note, time, color, textColor, email });
