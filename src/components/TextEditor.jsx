@@ -1,4 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { useAutosave } from "../hooks/useAutosave";
 import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import EditorjsList from "@editorjs/list";
@@ -21,7 +25,39 @@ ace.config.setModuleUrl("ace/mode/javascript_worker", modeJSWorker);
 ace.config.setModuleUrl("ace/mode/css_worker", modeCSSWorker);
 
 function TextEditor() {
+  const { noteId } = useParams();
   const editorRef = useRef(null);
+  const [content, setContent] = useState(null);
+
+  const note = useQuery(api.Notes.get, { _id: noteId });
+  const noteContent = useQuery(api.Notes.getNoteContent, note ? { storageId: note.storageId } : "skip");
+  
+  const generateUploadUrl = useMutation(api.files.generateUploadUrl);
+  const updateNote = useMutation(api.Notes.updateNote);
+
+  useEffect(() => {
+    if (noteContent) {
+      setContent(noteContent);
+    }
+  }, [noteContent]);
+
+  const saveNote = async () => {
+    if (!note || !content) return;
+
+    const postUrl = await generateUploadUrl();
+    const file = new File([JSON.stringify(content)], "note_content.json", { type: "application/json" });
+    
+    const result = await fetch(postUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: file,
+    });
+    const { storageId } = await result.json();
+
+    await updateNote({ _id: note._id, storageId });
+  };
+
+  useAutosave(saveNote, 2000, [content]);
 
   //Code initialization
   const aceConfig = {
@@ -51,6 +87,8 @@ function TextEditor() {
 
 
   useEffect(() => {
+    if (content === null) return; // Don't initialize editor until content is loaded
+
     if (!editorRef.current) {
       editorRef.current = new EditorJS({
         holder: "editorjs",
@@ -96,6 +134,11 @@ function TextEditor() {
             config: aceConfig,
           },
         },
+        data: content,
+        onChange: async () => {
+            const savedData = await editorRef.current.save();
+            setContent(savedData);
+        }
       });
     }
 
@@ -106,7 +149,15 @@ function TextEditor() {
         editorRef.current = null;
       }
     };
-  }, []);
+  }, [content]);
+
+  if (note === undefined || noteContent === undefined) {
+    return <div>Loading...</div>;
+  }
+  
+  if (note === null) {
+    return <div>Note not found.</div>
+  }
 
   return (
     <div className="text-editor h-screen  p-5">

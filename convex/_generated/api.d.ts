@@ -13,6 +13,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as files from "../files.js";
 import type * as Notes from "../Notes.js";
 
 /**
@@ -24,6 +25,7 @@ import type * as Notes from "../Notes.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  files: typeof files;
   Notes: typeof Notes;
 }>;
 export declare const api: FilterApi<

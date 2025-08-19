@@ -18,7 +18,7 @@ export const get = query({
 export const createTask = mutation({
   args: {   // The ID of the note to be created
     title: v.string(),       // Correct schema validation for strings
-    note: v.string(),
+    storageId: v.optional(v.id("_storage")),
     time: v.string(),
     color: v.string(),
     textColor: v.string(),
@@ -28,7 +28,7 @@ export const createTask = mutation({
   handler: async (ctx, args) => {
     const notesID = await ctx.db.insert("notes", { 
         title: args.title,
-        note: args.note,
+        storageId: args.storageId,
         time: args.time,
         color: args.color,
         textColor: args.textColor,
@@ -50,7 +50,7 @@ export const updateNote = mutation({
   args: {
     _id: v.id("notes"),      // The ID of the note to be updated
     title: v.optional(v.string()),  // Optional fields to update
-    note: v.optional(v.string()),
+    storageId: v.optional(v.id("_storage")),
     time: v.optional(v.string()),
     color: v.optional(v.string()),
     textColor: v.optional(v.string()),
@@ -58,7 +58,7 @@ export const updateNote = mutation({
     pinned: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
-    const { _id, title, note, time, color, textColor, email, pinned } = args;
+    const { _id, title, storageId, time, color, textColor, email, pinned } = args;
 
     // Get the note with the given _id
     const noteData = await ctx.db.get(_id);
@@ -69,7 +69,7 @@ export const updateNote = mutation({
     }
 
     // Patch the note with updated fields
-    await ctx.db.patch(_id, { title, note, time, color, textColor, email, pinned });
+    await ctx.db.patch(_id, { title, storageId, time, color, textColor, email, pinned });
 
     // Optionally log the updated note
     // console.log("Note updated:", { _id, title, note, time, color, textColor, email });
@@ -92,5 +92,24 @@ export const deleteNote = mutation({
 
     // Delete the note from the database
     await ctx.db.delete(_id);
+  },
+});
+
+
+export const getNoteContent = query({
+  args: { storageId: v.id("_storage") },
+  handler: async (ctx, args) => {
+    const content = await ctx.storage.get(args.storageId);
+    if (content === null) {
+      return null;
+    }
+    // Convert the content (Blob) to text
+    const text = await new Response(content).text();
+    try {
+      return JSON.parse(text);
+    } catch (e) {
+      // If not valid JSON, return as plain text
+      return text;
+    }
   },
 });

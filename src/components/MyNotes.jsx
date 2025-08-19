@@ -7,7 +7,8 @@ import { api } from "../../convex/_generated/api";
 import { MdAdd } from "react-icons/md";
 import { RiDeleteBin3Fill } from "react-icons/ri";
 import { useMutation } from "convex/react";
-import { FiSearch } from 'react-icons/fi';
+import { TitleDialog } from "./TitleDialog";
+import { FiSearch } from "react-icons/fi";
 
 function formatDate(isoString) {
   if (!isoString) return "";
@@ -26,6 +27,7 @@ function MyNotes() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [noteToDelete, setNoteToDelete] = useState(null);
   const [search, setSearch] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const emailAddress = user?.emailAddresses?.[0]?.emailAddress || "";
   const data = useQuery(api.Notes.get, { email: emailAddress });
@@ -105,19 +107,11 @@ function MyNotes() {
         <p className="text-lg text-gray-600 mb-8">You have no notes yet. Click the + button to create your first note!</p>
         <button
           className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-bold py-3 px-6 rounded-full shadow-lg text-2xl flex items-center gap-2"
-          onClick={() => {
-            setSelectedNote({
-              title: "",
-              note: "",
-              color: "#ffffff",
-              textColor: "#000000",
-              time: new Date().toISOString(),
-            });
-            navigate("/editor");
-          }}
+          onClick={() => setIsDialogOpen(true)}
         >
           <MdAdd size={32} /> New Note
         </button>
+        <TitleDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} />
       </div>
     );
   }
@@ -145,16 +139,7 @@ function MyNotes() {
             <div
               key={card._id}
               onClick={() => {
-                setSelectedNote({
-                  _id: card._id,
-                  title: card.title || "",
-                  note: card.note || "",
-                  time: card.time || new Date().toISOString(),
-                  color: card.color || "#ffffff",
-                  textColor: card.textColor || "#000000",
-                  pinned: card.pinned || false,
-                });
-                navigate("/editor");
+                navigate(`/editor/${card._id}`);
               }}
               style={{
                 backgroundColor: card.color || "#ffffff",
@@ -179,7 +164,7 @@ function MyNotes() {
               
               <h2 className="text-2xl font-bold mb-2 truncate">{card.title || "Untitled"}</h2>
               <hr className="border-t border-gray-500/30 my-1" />
-              <p className="flex-1 whitespace-pre-wrap break-words text-base mt-2 max-h-48 overflow-y-auto">{card.note || "No content"}</p>
+              <p className="flex-1 whitespace-pre-wrap break-words text-base mt-2 max-h-48 overflow-y-auto">{"No preview available"}</p>
               <div className="text-sm text-gray-800/80 mt-auto pt-2">
                 <span>{formatDate(card.time)}</span>
                 {deletingId === card._id && <span className="text-red-500 ml-2 animate-pulse">Deleting...</span>}
@@ -192,21 +177,13 @@ function MyNotes() {
       {/* Floating Add Button */}
       <button
         className="fixed bottom-6 right-6 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-bold py-4 px-6 rounded-full shadow-lg text-3xl flex items-center gap-2 z-50"
-        onClick={() => {
-          setSelectedNote({
-            title: "",
-            note: "",
-            color: "#ffffff",
-            textColor: "#000000",
-            time: new Date().toISOString(),
-          });
-          navigate("/editor");
-        }}
+        onClick={() => setIsDialogOpen(true)}
         title="Add new note"
         style={{ minWidth: '64px', minHeight: '64px' }}
       >
         <MdAdd size={36} />
       </button>
+      <TitleDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} />
 
       {/* Delete Confirmation Modal */}
       {showConfirm && noteToDelete && (

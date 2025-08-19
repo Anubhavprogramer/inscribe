@@ -4,7 +4,7 @@ import { v } from "convex/values";
 export default defineSchema({
   notes: defineTable({
     title: v.string(),       // Correct schema validation for strings
-    note: v.string(),
+    storageId: v.optional(v.id("_storage")),
     time: v.string(),
     color: v.string(),
     textColor: v.string(),
