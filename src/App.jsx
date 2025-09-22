@@ -52,7 +52,7 @@ function App() {
         <ColorProvider>
           <Navbar />
           <Routes>
-            <Route path="/editor" element={<TextEditor />} />
+            <Route path="/editor/:noteId" element={<TextEditor />} />
             <Route path="/" element={<MyNotes />} />
           </Routes>
         </ColorProvider>
