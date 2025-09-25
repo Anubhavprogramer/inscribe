@@ -35,8 +35,8 @@ function Navbar() {
         </div>
          {/* Desktop Nav Links */}
         <div className="hidden md:flex items-center gap-8">
-          <button className={`text-lg font-semibold hover:text-purple-600 transition ${location.pathname === '/' ? 'underline underline-offset-4' : ''}`} onClick={() => navigate("/")}>My Notes</button>
-          <button className="flex items-center gap-1 text-sm font-semibold px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow hover:from-purple-600 hover:to-blue-600 transition" onClick={handleNewNote}><MdAdd size={20} /> New Note</button>
+          <button className={`text-lg font-semibold hover:text-purple-600 transition`} onClick={() => navigate("/")}>My Notes</button>
+          {/* <button className="flex items-center gap-1 text-sm font-semibold px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow hover:from-purple-600 hover:to-blue-600 transition" onClick={handleNewNote}><MdAdd size={20} /> New Note</button> */}
         </div>
       </div>
 

@@ -191,7 +191,7 @@ function TextEditor() {
       <div className="absolute top-4 right-4 z-50">
         {isSaving && (
           <div className="flex items-center gap-2 bg-purple-500 text-white px-3 py-1 rounded-full text-sm shadow-lg">
-            <LoadingSpinner size="sm" className="w-4 h-4" />
+            {/* <LoadingSpinner size="sm" className="w-4 h-4" /> */}
             <span>Saving...</span>
           </div>
         )}
