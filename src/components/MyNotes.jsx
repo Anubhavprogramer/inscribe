@@ -9,6 +9,7 @@ import { RiDeleteBin3Fill } from "react-icons/ri";
 import { useMutation } from "convex/react";
 import { TitleDialog } from "./TitleDialog";
 import { FiSearch } from "react-icons/fi";
+import Loading from "./Loading";
 
 function formatDate(isoString) {
   if (!isoString) return "";
@@ -93,21 +94,11 @@ function MyNotes() {
   // Loading skeleton
   if (!isLoaded || data === undefined) {
     return (
-      <div className="p-8 min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100 dark:from-gray-800 dark:to-gray-900">
-        <div className="animate-pulse grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-5xl">
-          {[...Array(6)].map((_, i) => (
-            <div
-              key={i}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-md h-56 w-full p-6 flex flex-col gap-4"
-            >
-              <div className="h-6 bg-gray-200 dark:bg-gray-600 rounded w-1/2"></div>
-              <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded w-3/4"></div>
-              <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded w-2/3"></div>
-              <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded w-1/3 mt-auto"></div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <Loading 
+        text="Loading your notes..." 
+        size="lg" 
+        fullScreen={true}
+      />
     );
   }
 

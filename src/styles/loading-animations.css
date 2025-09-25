@@ -1,0 +1,107 @@
+/* Custom loading animations */
+@keyframes bounceUpDown {
+  0%, 100% {
+    transform: translateY(0px);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(-20px);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+@keyframes bounceUpDownSmall {
+  0%, 100% {
+    transform: translateY(0px);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(-12px);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 12px 48px rgba(139, 92, 246, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 100% 0;
+  }
+}
+
+.loading-block {
+  animation: bounceUpDown 1.4s ease-in-out infinite;
+}
+
+.loading-block-1 {
+  animation-delay: 0ms;
+}
+
+.loading-block-2 {
+  animation-delay: 200ms;
+}
+
+.loading-block-3 {
+  animation-delay: 400ms;
+}
+
+/* Smaller bounce for smaller sizes */
+.loading-block:has(.w-6) {
+  animation: bounceUpDownSmall 1.4s ease-in-out infinite;
+}
+
+.loading-glow {
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+.loading-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+  border-radius: inherit;
+}
+
+/* Dark mode adjustments */
+.dark .loading-block {
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.dark .loading-glow {
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-block {
+    animation: none;
+    transform: translateY(0);
+  }
+  
+  .loading-glow {
+    animation: none;
+  }
+  
+  .loading-shimmer::before {
+    animation: none;
+  }
+}

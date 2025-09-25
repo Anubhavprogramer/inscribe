@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useAutosave } from "../hooks/useAutosave";
+import Loading, { LoadingSpinner } from "./Loading";
 import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import EditorjsList from "@editorjs/list";
@@ -32,6 +33,7 @@ function TextEditor() {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [initialContentLoaded, setInitialContentLoaded] = useState(false);
   const [lastSavedContent, setLastSavedContent] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Fetch note metadata
   const note = useQuery(api.Notes.getById, { _id: noteId });
@@ -50,6 +52,7 @@ function TextEditor() {
     setHasUnsavedChanges(false);
     setInitialContentLoaded(false);
     setLastSavedContent(null);
+    setIsSaving(false);
     if (editorRef.current?.destroy) {
       editorRef.current.destroy();
       editorRef.current = null;
@@ -78,6 +81,7 @@ function TextEditor() {
     }
 
     try {
+      setIsSaving(true);
       await updateNote({ 
         _id: note._id, 
         content: content,
@@ -88,6 +92,8 @@ function TextEditor() {
       console.log("Note saved successfully");
     } catch (error) {
       console.error("Failed to save note:", error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -162,16 +168,48 @@ function TextEditor() {
 
   // Loading state
   if (!note || !noteContent) {
-    return <div className="p-8 text-center text-gray-600 dark:text-gray-400">Loading...</div>;
+    return (
+      <div className="h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
+        <Loading text="Opening note..." size="md" showText={true} />
+      </div>
+    );
   }
 
   if (note === null) {
-    return <div className="p-8 text-center text-gray-600 dark:text-gray-400">Note not found.</div>;
+    return (
+      <div className="h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600 dark:text-gray-400 text-lg">Note not found.</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="text-editor h-screen p-5 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
-      <div id="editorjs" className="h-full w-full"></div>
+    <div className="text-editor h-screen bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 relative">
+      {/* Save indicator */}
+      <div className="absolute top-4 right-4 z-50">
+        {isSaving && (
+          <div className="flex items-center gap-2 bg-purple-500 text-white px-3 py-1 rounded-full text-sm shadow-lg">
+            <LoadingSpinner size="sm" className="w-4 h-4" />
+            <span>Saving...</span>
+          </div>
+        )}
+        {hasUnsavedChanges && !isSaving && (
+          <div className="flex items-center gap-2 bg-yellow-500 text-white px-3 py-1 rounded-full text-sm shadow-lg">
+            <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+            <span>Unsaved changes</span>
+          </div>
+        )}
+        {!hasUnsavedChanges && !isSaving && lastSavedContent && (
+          <div className="flex items-center gap-2 bg-green-500 text-white px-3 py-1 rounded-full text-sm shadow-lg opacity-75">
+            <div className="w-2 h-2 bg-white rounded-full"></div>
+            <span>All changes saved</span>
+          </div>
+        )}
+      </div>
+      
+      <div id="editorjs" className="h-full w-full p-5"></div>
     </div>
   );
 }
