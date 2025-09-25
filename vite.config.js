@@ -9,4 +9,24 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // Add SPA fallback for client-side routing
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
+  },
+  // This ensures all routes fall back to index.html for client-side routing
+  preview: {
+    port: 3000,
+    strictPort: true,
+  },
+  server: {
+    port: 5173,
+    strictPort: true,
+    host: true,
+    // This is crucial for SPA routing in development
+    historyApiFallback: true,
+  },
 })

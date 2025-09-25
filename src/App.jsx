@@ -55,20 +55,21 @@ function App() {
           <Route path="/share/:noteId" element={<PublicNoteViewer />} />
           
           {/* Authenticated routes */}
-          <Route path="/*" element={
+          <Route path="/editor/:noteId" element={
+            <SignedIn>
+              <Navbar />
+              <TextEditor />
+            </SignedIn>
+          } />
+          
+          <Route path="/" element={
             <>
               <SignedIn>
                 <Navbar />
-                <Routes>
-                  <Route path="/editor/:noteId" element={<TextEditor />} />
-                  <Route path="/" element={<MyNotes />} />
-                </Routes>
+                <MyNotes />
               </SignedIn>
-
               <SignedOut>
-                <Routes>
-                  <Route path="/" element={<LandingPage/>} />
-                </Routes>
+                <LandingPage />
               </SignedOut>
             </>
           } />

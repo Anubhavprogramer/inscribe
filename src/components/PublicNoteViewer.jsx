@@ -33,12 +33,19 @@ function PublicNoteViewer() {
   const [isInitialized, setIsInitialized] = useState(false);
   const { isDarkMode } = useContext(ColorContext);
 
+  // Debug logging
+  console.log("PublicNoteViewer - noteId:", noteId);
+
   // Fetch public note data (no auth required)
   const note = useQuery(api.Notes.getPublicNoteById, { _id: noteId });
   const noteContent = useQuery(
     api.Notes.getPublicNoteContent,
     note ? { _id: note._id } : "skip"
   );
+
+  // Debug logging
+  console.log("PublicNoteViewer - note:", note);
+  console.log("PublicNoteViewer - noteContent:", noteContent);
 
   // Initialize read-only editor
   useEffect(() => {
