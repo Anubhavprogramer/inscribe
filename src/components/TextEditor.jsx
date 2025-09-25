@@ -162,15 +162,15 @@ function TextEditor() {
 
   // Loading state
   if (!note || !noteContent) {
-    return <div>Loading...</div>;
+    return <div className="p-8 text-center text-gray-600 dark:text-gray-400">Loading...</div>;
   }
 
   if (note === null) {
-    return <div>Note not found.</div>;
+    return <div className="p-8 text-center text-gray-600 dark:text-gray-400">Note not found.</div>;
   }
 
   return (
-    <div className="text-editor h-screen p-5">
+    <div className="text-editor h-screen p-5 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
       <div id="editorjs" className="h-full w-full"></div>
     </div>
   );

@@ -3,7 +3,7 @@ import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/c
 import { ColorContext } from "../Contexts/ColorContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { MdAdd } from "react-icons/md";
-import { FiSun, FiMoon } from "react-icons/fi";
+import ThemeToggle from "./ThemeToggle";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ function Navbar() {
   };
 
   return (
-    <nav className={`w-full px-4 sm:px-10 py-4 flex items-center justify-between shadow-md bg-white text-black transition-colors duration-300`}>
+    <nav className={`w-full px-4 sm:px-10 py-4 flex items-center justify-between shadow-md bg-white dark:bg-gray-800 text-black dark:text-white transition-colors duration-300`}>
       {/* Left side: Nav items */}
       <div className="flex items-center gap-4 flex-1">
         {/* Hamburger for mobile */}
@@ -47,6 +47,8 @@ function Navbar() {
 
       {/* Right side: user only */}
       <div className="flex items-center gap-4 flex-1 justify-end">
+        <ThemeToggle />
+        
         <SignedOut>
           <SignInButton>
             <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-full font-semibold transition">Sign In</button>
@@ -59,10 +61,10 @@ function Navbar() {
             ) : (
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-blue-400 flex items-center justify-center text-white font-bold text-xl cursor-pointer border-2 border-purple-400 shadow">{user?.firstName?.[0] || user?.emailAddress?.[0] || "U"}</div>
             )}
-            <div className="absolute right-0 mt-2 w-56 bg-white text-black rounded-xl shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity z-50 p-4 flex flex-col gap-2">
+            <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 text-black dark:text-white rounded-xl shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity z-50 p-4 flex flex-col gap-2">
               <div className="font-bold text-lg">{user?.fullName || user?.emailAddress}</div>
-              <div className="text-sm text-gray-500 break-all">{user?.primaryEmailAddress?.emailAddress}</div>
-              <div className="border-t border-gray-200 my-2"></div>
+              <div className="text-sm text-gray-500 dark:text-gray-400 break-all">{user?.primaryEmailAddress?.emailAddress}</div>
+              <div className="border-t border-gray-200 dark:border-gray-600 my-2"></div>
               <UserButton afterSignOutUrl="/" />
             </div>
           </div>
@@ -71,8 +73,8 @@ function Navbar() {
 
       {/* Mobile menu dropdown */}
       {showMobileMenu && (
-        <div className="md:hidden absolute top-16 left-4 bg-white rounded-xl shadow-lg flex flex-col gap-2 p-4 z-50 min-w-[160px]">
-          <button className={`text-lg font-semibold hover:text-purple-600 transition text-left ${location.pathname === '/' ? 'underline underline-offset-4' : ''}`} onClick={() => {navigate("/"); setShowMobileMenu(false);}}>My Notes</button>
+        <div className="md:hidden absolute top-16 left-4 bg-white dark:bg-gray-800 text-black dark:text-white rounded-xl shadow-lg flex flex-col gap-2 p-4 z-50 min-w-[160px]">
+          <button className={`text-lg font-semibold hover:text-purple-600 dark:hover:text-purple-400 transition text-left ${location.pathname === '/' ? 'underline underline-offset-4' : ''}`} onClick={() => {navigate("/"); setShowMobileMenu(false);}}>My Notes</button>
           <button className="flex items-center gap-1 text-sm font-semibold px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow hover:from-purple-600 hover:to-blue-600 transition" onClick={() => {handleNewNote(); setShowMobileMenu(false);}}><MdAdd size={20} /> New Note</button>
         </div>
       )}

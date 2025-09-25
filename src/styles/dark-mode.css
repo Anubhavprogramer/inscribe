@@ -1,0 +1,94 @@
+/* Dark mode styles for EditorJS */
+.dark .codex-editor {
+  background-color: #111827;
+  color: #f3f4f6;
+}
+
+.dark .codex-editor__redactor {
+  background-color: #111827 !important;
+  color: #f3f4f6 !important;
+}
+
+.dark .ce-block__content {
+  background-color: #111827;
+  color: #f3f4f6;
+}
+
+.dark .ce-paragraph {
+  color: #f3f4f6 !important;
+}
+
+.dark .ce-header {
+  color: #f3f4f6 !important;
+}
+
+.dark .ce-list {
+  color: #f3f4f6 !important;
+}
+
+.dark .ce-checklist {
+  color: #f3f4f6 !important;
+}
+
+.dark .ce-quote {
+  background-color: #374151 !important;
+  color: #f3f4f6 !important;
+  border-left-color: #6b7280 !important;
+}
+
+.dark .ce-warning {
+  background-color: #374151 !important;
+  color: #f3f4f6 !important;
+}
+
+.dark .ce-toolbar__content,
+.dark .ce-toolbar__actions {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+.dark .ce-inline-toolbar {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+.dark .ce-toolbar__plus {
+  color: #f3f4f6 !important;
+}
+
+.dark .ce-toolbar__settings-btn {
+  color: #f3f4f6 !important;
+}
+
+.dark .ce-settings {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+.dark .ce-settings__button {
+  color: #f3f4f6 !important;
+}
+
+.dark .ce-conversion-toolbar {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+.dark .ce-conversion-tool {
+  color: #f3f4f6 !important;
+}
+
+.dark .ce-block--selected .ce-block__content {
+  background-color: #374151 !important;
+}
+
+/* Dark mode for Ace editor */
+.dark .ace_editor {
+  background-color: #1f2937 !important;
+  color: #f3f4f6 !important;
+}
+
+.dark .ace_gutter {
+  background-color: #111827 !important;
+  color: #9ca3af !important;
+}

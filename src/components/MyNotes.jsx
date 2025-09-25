@@ -93,17 +93,17 @@ function MyNotes() {
   // Loading skeleton
   if (!isLoaded || data === undefined) {
     return (
-      <div className="p-8 min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100">
+      <div className="p-8 min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100 dark:from-gray-800 dark:to-gray-900">
         <div className="animate-pulse grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-5xl">
           {[...Array(6)].map((_, i) => (
             <div
               key={i}
-              className="bg-white rounded-xl shadow-md h-56 w-full p-6 flex flex-col gap-4"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-md h-56 w-full p-6 flex flex-col gap-4"
             >
-              <div className="h-6 bg-gray-200 rounded w-1/2"></div>
-              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-              <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/3 mt-auto"></div>
+              <div className="h-6 bg-gray-200 dark:bg-gray-600 rounded w-1/2"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded w-3/4"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded w-2/3"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded w-1/3 mt-auto"></div>
             </div>
           ))}
         </div>
@@ -114,17 +114,17 @@ function MyNotes() {
   // Error state
   if (error) {
     return (
-      <div className="p-8 min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded mb-4 max-w-lg w-full">
+      <div className="p-8 min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100 dark:from-gray-800 dark:to-gray-900">
+        <div className="bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-500 text-red-700 dark:text-red-400 px-6 py-4 rounded mb-4 max-w-lg w-full">
           {error}
           <button
             onClick={() => setError(null)}
-            className="ml-2 text-red-700 hover:text-red-900 float-right font-bold"
+            className="ml-2 text-red-700 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 float-right font-bold"
           >
             ×
           </button>
         </div>
-        <h1 className="text-3xl font-bold mb-4">My Notes</h1>
+        <h1 className="text-3xl font-bold mb-4 text-gray-800 dark:text-gray-200">My Notes</h1>
       </div>
     );
   }
@@ -132,9 +132,9 @@ function MyNotes() {
   // Empty state
   if (data.length === 0) {
     return (
-      <div className="p-8 min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100">
-        <h1 className="text-3xl font-bold mb-4">My Notes</h1>
-        <p className="text-lg text-gray-600 mb-8">
+      <div className="p-8 min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100 dark:from-gray-800 dark:to-gray-900">
+        <h1 className="text-3xl font-bold mb-4 text-gray-800 dark:text-gray-200">My Notes</h1>
+        <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
           You have no notes yet. Click the + button to create your first note!
         </p>
         <button
@@ -150,7 +150,7 @@ function MyNotes() {
 
   return (
     <div
-      className="min-h-screen w-full bg-gradient-to-br from-purple-100 to-blue-100 relative flex flex-col items-center"
+      className="min-h-screen w-full bg-gradient-to-br from-purple-100 to-blue-100 dark:from-gray-800 dark:to-gray-900 relative flex flex-col items-center"
       style={{ minHeight: "100vh", width: "100vw" }}
     >
       {/* <h1 className="text-3xl font-bold mb-4 text-center w-full mt-6">My Notes</h1> */}
@@ -161,9 +161,9 @@ function MyNotes() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search notes..."
-            className="w-full py-3 pl-12 pr-4 rounded-full shadow focus:outline-none focus:ring-2 focus:ring-purple-400 text-lg bg-white"
+            className="w-full py-3 pl-12 pr-4 rounded-full shadow focus:outline-none focus:ring-2 focus:ring-purple-400 text-lg bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
           />
-          <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
+          <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-300 text-xl" />
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full px-4 sm:px-6 md:px-8 py-8">
@@ -178,7 +178,7 @@ function MyNotes() {
               onClick={() => {
                 navigate(`/editor/${card._id}`);
               }}
-              className="relative rounded-3xl p-6 min-h-[16rem] cursor-pointer hover:shadow-xl transition-shadow duration-200 flex flex-col group bg-white text-gray-800 border border-gray-200"
+              className="relative rounded-3xl p-6 min-h-[16rem] cursor-pointer hover:shadow-xl transition-shadow duration-200 flex flex-col group bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-600"
             >
               {/* Delete Button */}
               <button
@@ -187,21 +187,21 @@ function MyNotes() {
                   setShowConfirm(true);
                   setNoteToDelete(card);
                 }}
-                className="absolute top-4 right-4 bg-white hover:bg-zinc-100 w-8 h-8 rounded-full transition-all shadow-md"
+                className="absolute top-4 right-4 bg-black dark:bg-gray-700 hover:bg-zinc-700 dark:hover:bg-gray-600 w-8 h-8 rounded-full transition-all shadow-md flex items-center justify-center"
                 title="Delete note"
                 disabled={deletingId === card._id}
               >
-                {/* Icon removed for minimalist design */}
+                <RiDeleteBin3Fill className="text-red-500 dark:text-red-400 text-sm" />
               </button>
 
               <h2 className="text-2xl font-bold mb-2 truncate">
                 {card.title || "Untitled"}
               </h2>
-              <hr className="border-t border-gray-500/30 my-1" />
+              <hr className="border-t border-gray-500/30 dark:border-gray-400/30 my-1" />
               <p className="flex-1 whitespace-pre-wrap break-words text-base mt-2 max-h-48 overflow-y-auto">
                 {randomMessage()}
               </p>
-              <div className="text-sm text-gray-800/80 mt-auto pt-2">
+              <div className="text-sm text-gray-800/80 dark:text-gray-300/80 mt-auto pt-2">
                 <span>{formatDate(card.time)}</span>
                 {deletingId === card._id && (
                   <span className="text-red-500 ml-2 animate-pulse">
@@ -227,12 +227,12 @@ function MyNotes() {
 
       {/* Delete Confirmation Modal */}
       {showConfirm && noteToDelete && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-xl p-8 max-w-sm w-full flex flex-col items-center">
-            <h2 className="text-xl font-bold mb-4 text-red-600">
+        <div className="fixed inset-0 bg-black bg-opacity-40 dark:bg-black dark:bg-opacity-60 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 max-w-sm w-full flex flex-col items-center">
+            <h2 className="text-xl font-bold mb-4 text-red-600 dark:text-red-400">
               Delete Note?
             </h2>
-            <p className="mb-6 text-gray-700 text-center">
+            <p className="mb-6 text-gray-700 dark:text-gray-300 text-center">
               Are you sure you want to delete{" "}
               <span className="font-semibold">
                 {noteToDelete.title || "Untitled"}
@@ -245,7 +245,7 @@ function MyNotes() {
                   setShowConfirm(false);
                   setNoteToDelete(null);
                 }}
-                className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold"
+                className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 font-semibold"
               >
                 Cancel
               </button>
