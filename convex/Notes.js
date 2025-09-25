@@ -2,12 +2,24 @@ import { mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { query } from "./_generated/server";
 
-export const get = query({
+// Get a single note by ID
+export const getById = query({
   args: { _id: v.id("notes") },
   handler: async (ctx, { _id }) => {
     const note = await ctx.db.get(_id);
     if (!note) return null;
     return note;
+  },
+});
+
+// Get all notes for a user by email
+export const getAllByEmail = query({
+  args: { email: v.string() },
+  handler: async (ctx, { email }) => {
+    const notes = await ctx.db.query("notes")
+      .filter((q) => q.eq(q.field("email"), email))
+      .collect();
+    return notes;
   },
 });
 
@@ -48,6 +60,7 @@ export const updateNote = mutation({
   args: {
     _id: v.id("notes"),      // The ID of the note to be updated
     title: v.optional(v.string()),  // Optional fields to update
+    content: v.optional(v.any()),    // Editor content
     storageId: v.optional(v.id("_storage")),
     time: v.optional(v.string()),
     color: v.optional(v.string()),
@@ -56,7 +69,7 @@ export const updateNote = mutation({
     pinned: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
-    const { _id, title, storageId, time, color, textColor, email, pinned } = args;
+    const { _id, ...updateFields } = args;
 
     // Get the note with the given _id
     const noteData = await ctx.db.get(_id);
@@ -66,11 +79,21 @@ export const updateNote = mutation({
       throw new Error("Note not found");
     }
 
-    // Patch the note with updated fields
-    await ctx.db.patch(_id, { title, storageId, time, color, textColor, email, pinned });
+    // Create an object with only the fields that are defined
+    const fieldsToUpdate = {};
+    Object.keys(updateFields).forEach(key => {
+      if (updateFields[key] !== undefined) {
+        fieldsToUpdate[key] = updateFields[key];
+      }
+    });
+
+    // Only patch if there are fields to update
+    if (Object.keys(fieldsToUpdate).length > 0) {
+      await ctx.db.patch(_id, fieldsToUpdate);
+    }
 
     // Optionally log the updated note
-    // console.log("Note updated:", { _id, title, note, time, color, textColor, email });
+    // console.log("Note updated:", { _id, fieldsToUpdate });
   }
 });
 
@@ -95,19 +118,34 @@ export const deleteNote = mutation({
 
 
 export const getNoteContent = query({
-  args: { storageId: v.id("_storage") },
+  args: { _id: v.id("notes") },
   handler: async (ctx, args) => {
-    const content = await ctx.storage.get(args.storageId);
-    if (content === null) {
-      return null;
-    }
-    // Convert the content (Blob) to text
-    const text = await new Response(content).text();
     try {
-      return JSON.parse(text);
-    } catch (e) {
-      // If not valid JSON, return as plain text
-      return text;
+      const note = await ctx.db.get(args._id);
+      
+      if (!note) {
+        return null;
+      }
+      
+      // Return content directly from the database
+      if (note.content) {
+        return note.content;
+      }
+      
+      // Return empty editor content for new notes
+      return {
+        time: Date.now(),
+        blocks: [],
+        version: "2.28.2"
+      };
+    } catch (error) {
+      console.error("Error fetching note content:", error);
+      // Return empty content on error
+      return {
+        time: Date.now(),
+        blocks: [],
+        version: "2.28.2"
+      };
     }
   },
 });

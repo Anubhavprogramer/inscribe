@@ -29,46 +29,57 @@ function TextEditor() {
   const { noteId } = useParams();
   const editorRef = useRef(null);
   const [content, setContent] = useState(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [initialContentLoaded, setInitialContentLoaded] = useState(false);
 
   // Fetch note metadata
-  const note = useQuery(api.Notes.get, { _id: noteId });
+  const note = useQuery(api.Notes.getById, { _id: noteId });
 
-  // Fetch note content only if note exists
+  // Fetch note content - always call this, it will handle missing content
   const noteContent = useQuery(
-    note?._id ? api.Notes.getNoteContent : undefined,
-    note?._id ? { storageId: note.storageId } : undefined
+    api.Notes.getNoteContent,
+    note ? { _id: note._id } : "skip"
   );
 
-  const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const updateNote = useMutation(api.Notes.updateNote);
+
+  // Reset state when noteId changes
+  useEffect(() => {
+    setContent(null);
+    setHasUnsavedChanges(false);
+    setInitialContentLoaded(false);
+    if (editorRef.current?.destroy) {
+      editorRef.current.destroy();
+      editorRef.current = null;
+    }
+  }, [noteId]);
 
   // Set content after both note and noteContent are ready
   useEffect(() => {
-    if (note && noteContent) {
+    if (note && noteContent && !initialContentLoaded) {
       setContent(noteContent);
+      setInitialContentLoaded(true);
+      setHasUnsavedChanges(false);
     }
-  }, [note, noteContent]);
+  }, [note, noteContent, initialContentLoaded]);
 
   // Save function for autosave
   const saveNote = async () => {
-    if (!note || !content) return;
+    if (!note || !content || !hasUnsavedChanges) return;
 
-    const postUrl = await generateUploadUrl();
-    const file = new File([JSON.stringify(content)], "note_content.json", {
-      type: "application/json",
-    });
-
-    const result = await fetch(postUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: file,
-    });
-
-    const { storageId } = await result.json();
-    await updateNote({ _id: note._id, storageId });
+    try {
+      await updateNote({ 
+        _id: note._id, 
+        content: content,
+        time: new Date().toISOString()
+      });
+      setHasUnsavedChanges(false); // Mark as saved
+    } catch (error) {
+      console.error("Failed to save note:", error);
+    }
   };
 
-  useAutosave(saveNote, 2000, [content]);
+  useAutosave(saveNote, 2000, [content, hasUnsavedChanges]);
 
   // Ace editor config
   const aceConfig = {
@@ -98,7 +109,7 @@ function TextEditor() {
 
   // Initialize EditorJS once content is loaded
   useEffect(() => {
-    if (!content) return;
+    if (!content || !initialContentLoaded) return;
 
     if (!editorRef.current) {
       editorRef.current = new EditorJS({
@@ -118,6 +129,7 @@ function TextEditor() {
         onChange: async () => {
           const savedData = await editorRef.current.save();
           setContent(savedData);
+          setHasUnsavedChanges(true); // Mark as having unsaved changes
         },
       });
     }
@@ -128,10 +140,10 @@ function TextEditor() {
         editorRef.current = null;
       }
     };
-  }, [content]);
+  }, [content, initialContentLoaded]);
 
   // Loading state
-  if (!note || (note?._id && !noteContent)) {
+  if (!note || !noteContent) {
     return <div>Loading...</div>;
   }
 

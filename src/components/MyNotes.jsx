@@ -30,7 +30,7 @@ function MyNotes() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const emailAddress = user?.emailAddresses?.[0]?.emailAddress || "";
-  const data = useQuery(api.Notes.get, { email: emailAddress });
+  const data = useQuery(api.Notes.getAllByEmail, { email: emailAddress });
 
   useEffect(() => {
     if (isLoaded && !user) {

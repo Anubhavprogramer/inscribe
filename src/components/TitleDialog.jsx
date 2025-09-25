@@ -21,29 +21,15 @@ export function TitleDialog({ open, onOpenChange }) {
   const { user } = useUser();
   const navigate = useNavigate();
 
-  const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const createTask = useMutation(api.Notes.createTask);
 
   const handleSave = async () => {
     if (!title.trim() || !user) return;
 
     try {
-      // 1. Get a short-lived upload URL
-      const postUrl = await generateUploadUrl();
-
-      // 2. Create an empty file for the note content
-      const emptyFile = new File([], "note_content.json", { type: "application/json" });
-      const result = await fetch(postUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: emptyFile,
-      });
-      const { storageId } = await result.json();
-
-      // 3. Create the note with the new storageId
+      // Create the note without storageId initially
       const newNote = await createTask({
         title: title.trim(),
-        storageId,
         time: new Date().toISOString(),
         color: "#ffffff",
         textColor: "#000000",
@@ -53,7 +39,7 @@ export function TitleDialog({ open, onOpenChange }) {
       setTitle("");
       onOpenChange(false);
       
-      // 4. Navigate to the editor for the new note
+      // Navigate to the editor for the new note
       navigate(`/editor/${newNote._id}`);
 
     } catch (error) {
