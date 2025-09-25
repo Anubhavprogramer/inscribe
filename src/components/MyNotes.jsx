@@ -14,7 +14,11 @@ function formatDate(isoString) {
   if (!isoString) return "";
   const date = new Date(isoString);
   return date.toLocaleDateString(undefined, {
-    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
 
@@ -41,6 +45,24 @@ function MyNotes() {
     }
   }, [user, isLoaded, data, navigate, setCardnotes]);
 
+  const randomMessage = () => {
+    const messages = [
+      "Happy Journaling!",
+      "This note is empty",
+      "Start writing something...",
+      "Nothing to see here",
+      "Try adding some content",
+      "Keep Creating!",
+      "Stay Inspired!",
+      "Dream Big!",
+      "Keep Exploring!",
+      "Stay Curious!",
+      "Happy Coding!",
+      "Keep Smiling!",
+    ];
+    return messages[Math.floor(Math.random() * messages.length)];
+  };
+
   const deleteNote = useMutation(api.Notes.deleteNote);
 
   const handleDeleteNote = async () => {
@@ -58,10 +80,15 @@ function MyNotes() {
   };
 
   // Filter notes by search
-  const filteredData = Array.isArray(data) ? data.filter(card =>
-    (card.title || "Untitled").toLowerCase().includes(search.toLowerCase()) ||
-    (card.note || "").toLowerCase().includes(search.toLowerCase())
-  ) : [];
+  const filteredData = Array.isArray(data)
+    ? data.filter(
+        (card) =>
+          (card.title || "Untitled")
+            .toLowerCase()
+            .includes(search.toLowerCase()) ||
+          (card.note || "").toLowerCase().includes(search.toLowerCase())
+      )
+    : [];
 
   // Loading skeleton
   if (!isLoaded || data === undefined) {
@@ -69,7 +96,10 @@ function MyNotes() {
       <div className="p-8 min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100">
         <div className="animate-pulse grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-5xl">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-white rounded-xl shadow-md h-56 w-full p-6 flex flex-col gap-4">
+            <div
+              key={i}
+              className="bg-white rounded-xl shadow-md h-56 w-full p-6 flex flex-col gap-4"
+            >
               <div className="h-6 bg-gray-200 rounded w-1/2"></div>
               <div className="h-4 bg-gray-200 rounded w-3/4"></div>
               <div className="h-4 bg-gray-200 rounded w-2/3"></div>
@@ -87,7 +117,7 @@ function MyNotes() {
       <div className="p-8 min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100">
         <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded mb-4 max-w-lg w-full">
           {error}
-          <button 
+          <button
             onClick={() => setError(null)}
             className="ml-2 text-red-700 hover:text-red-900 float-right font-bold"
           >
@@ -104,7 +134,9 @@ function MyNotes() {
     return (
       <div className="p-8 min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100">
         <h1 className="text-3xl font-bold mb-4">My Notes</h1>
-        <p className="text-lg text-gray-600 mb-8">You have no notes yet. Click the + button to create your first note!</p>
+        <p className="text-lg text-gray-600 mb-8">
+          You have no notes yet. Click the + button to create your first note!
+        </p>
         <button
           className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-bold py-3 px-6 rounded-full shadow-lg text-2xl flex items-center gap-2"
           onClick={() => setIsDialogOpen(true)}
@@ -117,14 +149,17 @@ function MyNotes() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-purple-100 to-blue-100 relative flex flex-col items-center" style={{ minHeight: '100vh', width: '100vw' }}>
-      <h1 className="text-3xl font-bold mb-4 text-center w-full mt-6">My Notes</h1>
-      <div className="flex justify-center mb-4 w-full px-2 sm:px-0">
+    <div
+      className="min-h-screen w-full bg-gradient-to-br from-purple-100 to-blue-100 relative flex flex-col items-center"
+      style={{ minHeight: "100vh", width: "100vw" }}
+    >
+      {/* <h1 className="text-3xl font-bold mb-4 text-center w-full mt-6">My Notes</h1> */}
+      <div className="flex justify-center m-4 w-full px-2 sm:px-0">
         <div className="relative w-full max-w-lg">
           <input
             type="text"
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search notes..."
             className="w-full py-3 pl-12 pr-4 rounded-full shadow focus:outline-none focus:ring-2 focus:ring-purple-400 text-lg bg-white"
           />
@@ -133,7 +168,9 @@ function MyNotes() {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full px-4 sm:px-6 md:px-8 py-8">
         {filteredData.length === 0 ? (
-          <div className="col-span-full text-center text-gray-500 text-lg">No notes found.</div>
+          <div className="col-span-full text-center text-gray-500 text-lg">
+            No notes found.
+          </div>
         ) : (
           filteredData.map((card) => (
             <div
@@ -144,30 +181,39 @@ function MyNotes() {
               style={{
                 backgroundColor: card.color || "#ffffff",
                 color: card.textColor || "#222222",
-                backgroundImage: 'radial-gradient(circle at bottom right, rgba(255,255,255,0.3) 0%, transparent 40%)',
+                backgroundImage:
+                  "radial-gradient(circle at bottom right, rgba(255,255,255,0.3) 0%, transparent 40%)",
               }}
               className="relative rounded-3xl p-6 min-h-[16rem] cursor-pointer hover:shadow-xl transition-shadow duration-200 flex flex-col group"
             >
               {/* Delete Button */}
               <button
-                onClick={e => {
+                onClick={(e) => {
                   e.stopPropagation();
                   setShowConfirm(true);
                   setNoteToDelete(card);
                 }}
-                className="absolute top-4 right-4 bg-white hover:bg-gray-200 w-8 h-8 rounded-full transition-all shadow-md"
-                title="D"
+                className="absolute top-4 right-4 bg-white hover:bg-zinc-100 w-8 h-8 rounded-full transition-all shadow-md"
+                title="Delete note"
                 disabled={deletingId === card._id}
               >
                 {/* Icon removed for minimalist design */}
               </button>
-              
-              <h2 className="text-2xl font-bold mb-2 truncate">{card.title || "Untitled"}</h2>
+
+              <h2 className="text-2xl font-bold mb-2 truncate">
+                {card.title || "Untitled"}
+              </h2>
               <hr className="border-t border-gray-500/30 my-1" />
-              <p className="flex-1 whitespace-pre-wrap break-words text-base mt-2 max-h-48 overflow-y-auto">{"No preview available"}</p>
+              <p className="flex-1 whitespace-pre-wrap break-words text-base mt-2 max-h-48 overflow-y-auto">
+                {randomMessage()}
+              </p>
               <div className="text-sm text-gray-800/80 mt-auto pt-2">
                 <span>{formatDate(card.time)}</span>
-                {deletingId === card._id && <span className="text-red-500 ml-2 animate-pulse">Deleting...</span>}
+                {deletingId === card._id && (
+                  <span className="text-red-500 ml-2 animate-pulse">
+                    Deleting...
+                  </span>
+                )}
               </div>
             </div>
           ))
@@ -179,7 +225,7 @@ function MyNotes() {
         className="fixed bottom-6 right-6 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-bold py-4 px-6 rounded-full shadow-lg text-3xl flex items-center gap-2 z-50"
         onClick={() => setIsDialogOpen(true)}
         title="Add new note"
-        style={{ minWidth: '64px', minHeight: '64px' }}
+        style={{ minWidth: "64px", minHeight: "64px" }}
       >
         <MdAdd size={36} />
       </button>
@@ -189,8 +235,16 @@ function MyNotes() {
       {showConfirm && noteToDelete && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl shadow-xl p-8 max-w-sm w-full flex flex-col items-center">
-            <h2 className="text-xl font-bold mb-4 text-red-600">Delete Note?</h2>
-            <p className="mb-6 text-gray-700 text-center">Are you sure you want to delete <span className="font-semibold">{noteToDelete.title || "Untitled"}</span>? This action cannot be undone.</p>
+            <h2 className="text-xl font-bold mb-4 text-red-600">
+              Delete Note?
+            </h2>
+            <p className="mb-6 text-gray-700 text-center">
+              Are you sure you want to delete{" "}
+              <span className="font-semibold">
+                {noteToDelete.title || "Untitled"}
+              </span>
+              ? This action cannot be undone.
+            </p>
             <div className="flex gap-4">
               <button
                 onClick={() => {

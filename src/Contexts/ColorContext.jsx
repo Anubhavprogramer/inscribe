@@ -18,8 +18,8 @@ export const ColorProvider = ({ children }) => {
     title: "",
     note: "",
     time: new Date().toISOString(),
-    color: "#ffffff",
-    textColor: "#000000"
+    color: "#000000ff",
+    textColor: "#fffdfdff"
   }); // State to track the selected note
   
   const [allNotes, setAllNotes] = useState([]); // State to store all notes
