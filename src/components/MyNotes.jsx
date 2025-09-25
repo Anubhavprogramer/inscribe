@@ -156,7 +156,7 @@ function MyNotes() {
                   setNoteToDelete(card);
                 }}
                 className="absolute top-4 right-4 bg-white hover:bg-gray-200 w-8 h-8 rounded-full transition-all shadow-md"
-                title="Delete note"
+                title="D"
                 disabled={deletingId === card._id}
               >
                 {/* Icon removed for minimalist design */}

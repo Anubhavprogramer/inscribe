@@ -31,6 +31,7 @@ function TextEditor() {
   const [content, setContent] = useState(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [initialContentLoaded, setInitialContentLoaded] = useState(false);
+  const [lastSavedContent, setLastSavedContent] = useState(null);
 
   // Fetch note metadata
   const note = useQuery(api.Notes.getById, { _id: noteId });
@@ -48,6 +49,7 @@ function TextEditor() {
     setContent(null);
     setHasUnsavedChanges(false);
     setInitialContentLoaded(false);
+    setLastSavedContent(null);
     if (editorRef.current?.destroy) {
       editorRef.current.destroy();
       editorRef.current = null;
@@ -58,6 +60,7 @@ function TextEditor() {
   useEffect(() => {
     if (note && noteContent && !initialContentLoaded) {
       setContent(noteContent);
+      setLastSavedContent(JSON.stringify(noteContent)); // Track saved content
       setInitialContentLoaded(true);
       setHasUnsavedChanges(false);
     }
@@ -66,6 +69,13 @@ function TextEditor() {
   // Save function for autosave
   const saveNote = async () => {
     if (!note || !content || !hasUnsavedChanges) return;
+    
+    // Check if content actually changed
+    const currentContentString = JSON.stringify(content);
+    if (currentContentString === lastSavedContent) {
+      setHasUnsavedChanges(false);
+      return;
+    }
 
     try {
       await updateNote({ 
@@ -73,13 +83,15 @@ function TextEditor() {
         content: content,
         time: new Date().toISOString()
       });
+      setLastSavedContent(currentContentString); // Update saved content reference
       setHasUnsavedChanges(false); // Mark as saved
+      console.log("Note saved successfully");
     } catch (error) {
       console.error("Failed to save note:", error);
     }
   };
 
-  useAutosave(saveNote, 2000, [content, hasUnsavedChanges]);
+  useAutosave(saveNote, 3000, [hasUnsavedChanges]); // Increased delay and only depend on hasUnsavedChanges
 
   // Ace editor config
   const aceConfig = {
@@ -107,9 +119,9 @@ function TextEditor() {
     },
   };
 
-  // Initialize EditorJS once content is loaded
+  // Initialize EditorJS once initial content is loaded
   useEffect(() => {
-    if (!content || !initialContentLoaded) return;
+    if (!initialContentLoaded || !content) return;
 
     if (!editorRef.current) {
       editorRef.current = new EditorJS({
@@ -127,9 +139,15 @@ function TextEditor() {
         },
         data: content,
         onChange: async () => {
-          const savedData = await editorRef.current.save();
-          setContent(savedData);
-          setHasUnsavedChanges(true); // Mark as having unsaved changes
+          try {
+            const savedData = await editorRef.current.save();
+            setContent(savedData);
+            if (!hasUnsavedChanges) {
+              setHasUnsavedChanges(true); // Mark as having unsaved changes
+            }
+          } catch (error) {
+            console.error("Error saving editor data:", error);
+          }
         },
       });
     }
@@ -140,7 +158,7 @@ function TextEditor() {
         editorRef.current = null;
       }
     };
-  }, [content, initialContentLoaded]);
+  }, [initialContentLoaded]); // Only depend on initialContentLoaded, not content
 
   // Loading state
   if (!note || !noteContent) {
