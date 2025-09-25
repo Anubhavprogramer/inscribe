@@ -9,5 +9,6 @@ export default defineSchema({
     time: v.string(),
     email: v.string(),
     pinned: v.optional(v.boolean()), // Added for pinning support
+    isPublic: v.optional(v.boolean()), // Added for shareable public notes
   }),
 });

@@ -9,6 +9,7 @@ import { RiDeleteBin3Fill } from "react-icons/ri";
 import { useMutation } from "convex/react";
 import { TitleDialog } from "./TitleDialog";
 import { FiSearch } from "react-icons/fi";
+import ShareButton from "./ShareButton";
 import Loading from "./Loading";
 
 function formatDate(isoString) {
@@ -171,19 +172,42 @@ function MyNotes() {
               }}
               className="relative rounded-3xl p-6 min-h-[16rem] cursor-pointer hover:shadow-xl transition-shadow duration-200 flex flex-col group bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-600"
             >
-              {/* Delete Button */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowConfirm(true);
-                  setNoteToDelete(card);
-                }}
-                className="absolute top-4 right-4 bg-black dark:bg-gray-700 hover:bg-zinc-700 dark:hover:bg-gray-600 w-8 h-8 rounded-full transition-all shadow-md flex items-center justify-center"
-                title="Delete note"
-                disabled={deletingId === card._id}
-              >
-                <RiDeleteBin3Fill className="text-red-500 dark:text-red-400 text-sm" />
-              </button>
+              {/* Action buttons */}
+              <div className="absolute top-4 right-4 flex items-center space-x-2">
+                {/* Share Button */}
+                <div onClick={(e) => e.stopPropagation()}>
+                  <ShareButton 
+                    note={card} 
+                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                  />
+                </div>
+                
+                {/* Delete Button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowConfirm(true);
+                    setNoteToDelete(card);
+                  }}
+                  className="bg-black dark:bg-gray-700 hover:bg-zinc-700 dark:hover:bg-gray-600 w-8 h-8 rounded-full transition-all shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100"
+                  title="Delete note"
+                  disabled={deletingId === card._id}
+                >
+                  <RiDeleteBin3Fill className="text-red-500 dark:text-red-400 text-sm" />
+                </button>
+              </div>
+
+              {/* Public indicator */}
+              {card.isPublic && (
+                <div className="absolute top-4 left-4">
+                  <div className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100">
+                    <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clipRule="evenodd" />
+                    </svg>
+                    Public
+                  </div>
+                </div>
+              )}
 
               <h2 className="text-2xl font-bold mb-2 truncate">
                 {card.title || "Untitled"}

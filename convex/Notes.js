@@ -143,3 +143,50 @@ export const getNoteContent = query({
     }
   },
 });
+
+// Public queries that don't require authentication
+
+// Get a public note by ID (no auth required)
+export const getPublicNoteById = query({
+  args: { _id: v.id("notes") },
+  handler: async (ctx, { _id }) => {
+    const note = await ctx.db.get(_id);
+    if (!note || !note.isPublic) return null;
+    return note;
+  },
+});
+
+// Get public note content (no auth required)
+export const getPublicNoteContent = query({
+  args: { _id: v.id("notes") },
+  handler: async (ctx, { _id }) => {
+    const note = await ctx.db.get(_id);
+    if (!note || !note.isPublic) return null;
+    
+    // Return content directly if it exists in the note
+    if (note.content) {
+      return note.content;
+    }
+    
+    // Return empty content if none exists
+    return {
+      blocks: [],
+      version: "2.28.2"
+    };
+  },
+});
+
+// Toggle note public/private status
+export const toggleNotePublic = mutation({
+  args: { _id: v.id("notes") },
+  handler: async (ctx, { _id }) => {
+    const note = await ctx.db.get(_id);
+    if (!note) throw new Error("Note not found");
+    
+    await ctx.db.patch(_id, { 
+      isPublic: !note.isPublic 
+    });
+    
+    return { success: true, isPublic: !note.isPublic };
+  },
+});

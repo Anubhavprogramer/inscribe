@@ -4,6 +4,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useAutosave } from "../hooks/useAutosave";
 import Loading, { LoadingSpinner } from "./Loading";
+import ShareButton from "./ShareButton";
 import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import EditorjsList from "@editorjs/list";
@@ -187,29 +188,42 @@ function TextEditor() {
 
   return (
     <div className="text-editor h-screen bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 relative">
-      {/* Save indicator */}
-      <div className="absolute top-4 right-4 z-50">
-        {isSaving && (
-          <div className="flex items-center gap-2 bg-purple-500 text-white px-3 py-1 rounded-full text-sm shadow-lg">
-            {/* <LoadingSpinner size="sm" className="w-4 h-4" /> */}
-            <span>Saving...</span>
-          </div>
-        )}
-        {hasUnsavedChanges && !isSaving && (
-          <div className="flex items-center gap-2 bg-yellow-500 text-white px-3 py-1 rounded-full text-sm shadow-lg">
-            <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-            <span>Unsaved changes</span>
-          </div>
-        )}
-        {!hasUnsavedChanges && !isSaving && lastSavedContent && (
-          <div className="flex items-center gap-2 bg-green-500 text-white px-3 py-1 rounded-full text-sm shadow-lg opacity-75">
-            <div className="w-2 h-2 bg-white rounded-full"></div>
-            <span>All changes saved</span>
-          </div>
-        )}
+      {/* Top action bar */}
+      <div className="absolute top-4 left-4 right-4 z-50 flex items-center justify-between">
+        {/* Left side - Note title */}
+        <div className="bg-white dark:bg-gray-800 px-3 py-1 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <span className="text-sm font-medium text-gray-900 dark:text-white">
+            {note?.title || "Untitled Note"}
+          </span>
+        </div>
+        
+        {/* Right side - Actions */}
+        <div className="flex items-center space-x-2">
+          {/* Share button */}
+          <ShareButton note={note} />
+          
+          {/* Save indicator */}
+          {isSaving && (
+            <div className="flex items-center gap-2 bg-purple-500 text-white px-3 py-1 rounded-full text-sm shadow-lg">
+              <span>Saving...</span>
+            </div>
+          )}
+          {hasUnsavedChanges && !isSaving && (
+            <div className="flex items-center gap-2 bg-yellow-500 text-white px-3 py-1 rounded-full text-sm shadow-lg">
+              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              <span>Unsaved changes</span>
+            </div>
+          )}
+          {!hasUnsavedChanges && !isSaving && lastSavedContent && (
+            <div className="flex items-center gap-2 bg-green-500 text-white px-3 py-1 rounded-full text-sm shadow-lg opacity-75">
+              <div className="w-2 h-2 bg-white rounded-full"></div>
+              <span>All changes saved</span>
+            </div>
+          )}
+        </div>
       </div>
       
-      <div id="editorjs" className="h-full w-full p-5"></div>
+      <div id="editorjs" className="h-full w-full p-5 pt-20"></div>
     </div>
   );
 }

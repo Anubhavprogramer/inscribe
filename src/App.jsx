@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import TextEditor from "./components/TextEditor";
 import { ColorProvider } from "./Contexts/ColorContext";
 import MyNotes from "./components/MyNotes";
+import PublicNoteViewer from "./components/PublicNoteViewer";
 import { SignedIn, SignedOut } from "@clerk/clerk-react";
 import LandingPage from "./components/LandingPage";
 
@@ -48,21 +49,31 @@ function App() {
 
   return (
     <Router>
-      <SignedIn>
-        <ColorProvider>
-          <Navbar />
-          <Routes>
-            <Route path="/editor/:noteId" element={<TextEditor />} />
-            <Route path="/" element={<MyNotes />} />
-          </Routes>
-        </ColorProvider>
-      </SignedIn>
-
-      <SignedOut>
+      <ColorProvider>
         <Routes>
-          <Route path="/" element={<LandingPage/>} />
+          {/* Public routes - available without authentication */}
+          <Route path="/share/:noteId" element={<PublicNoteViewer />} />
+          
+          {/* Authenticated routes */}
+          <Route path="/*" element={
+            <>
+              <SignedIn>
+                <Navbar />
+                <Routes>
+                  <Route path="/editor/:noteId" element={<TextEditor />} />
+                  <Route path="/" element={<MyNotes />} />
+                </Routes>
+              </SignedIn>
+
+              <SignedOut>
+                <Routes>
+                  <Route path="/" element={<LandingPage/>} />
+                </Routes>
+              </SignedOut>
+            </>
+          } />
         </Routes>
-      </SignedOut>
+      </ColorProvider>
     </Router>
   );
 }
