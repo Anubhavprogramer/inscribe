@@ -17,8 +17,6 @@ function Navbar() {
     setSelectedNote({
       title: "",
       note: "",
-      color: "#ffffff",
-      textColor: "#000000",
       time: new Date().toISOString(),
     });
     navigate("/editor");

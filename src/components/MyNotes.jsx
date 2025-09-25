@@ -178,13 +178,7 @@ function MyNotes() {
               onClick={() => {
                 navigate(`/editor/${card._id}`);
               }}
-              style={{
-                backgroundColor: card.color || "#ffffff",
-                color: card.textColor || "#222222",
-                backgroundImage:
-                  "radial-gradient(circle at bottom right, rgba(255,255,255,0.3) 0%, transparent 40%)",
-              }}
-              className="relative rounded-3xl p-6 min-h-[16rem] cursor-pointer hover:shadow-xl transition-shadow duration-200 flex flex-col group"
+              className="relative rounded-3xl p-6 min-h-[16rem] cursor-pointer hover:shadow-xl transition-shadow duration-200 flex flex-col group bg-white text-gray-800 border border-gray-200"
             >
               {/* Delete Button */}
               <button

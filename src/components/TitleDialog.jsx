@@ -31,8 +31,6 @@ export function TitleDialog({ open, onOpenChange }) {
       const newNote = await createTask({
         title: title.trim(),
         time: new Date().toISOString(),
-        color: "#ffffff",
-        textColor: "#000000",
         email: user.primaryEmailAddress.emailAddress,
       });
 

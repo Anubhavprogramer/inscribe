@@ -7,8 +7,6 @@ export default defineSchema({
     content: v.optional(v.any()), // Store editor content directly
     storageId: v.optional(v.id("_storage")), // Keep for backward compatibility
     time: v.string(),
-    color: v.string(),
-    textColor: v.string(),
     email: v.string(),
     pinned: v.optional(v.boolean()), // Added for pinning support
   }),

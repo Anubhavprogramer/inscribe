@@ -30,8 +30,6 @@ export const createTask = mutation({
     title: v.string(),       // Correct schema validation for strings
     storageId: v.optional(v.id("_storage")),
     time: v.string(),
-    color: v.string(),
-    textColor: v.string(),
     email: v.string(),
     pinned: v.optional(v.boolean()),
    },
@@ -40,8 +38,6 @@ export const createTask = mutation({
         title: args.title,
         storageId: args.storageId,
         time: args.time,
-        color: args.color,
-        textColor: args.textColor,
         email: args.email,
         pinned: args.pinned,
     });
@@ -63,8 +59,6 @@ export const updateNote = mutation({
     content: v.optional(v.any()),    // Editor content
     storageId: v.optional(v.id("_storage")),
     time: v.optional(v.string()),
-    color: v.optional(v.string()),
-    textColor: v.optional(v.string()),
     email: v.optional(v.string()),
     pinned: v.optional(v.boolean()),
   },
